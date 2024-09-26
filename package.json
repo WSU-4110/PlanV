@@ -27,5 +27,11 @@
   "dependencies": {
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "lite-server": "^2.6.1"
   }
+"scripts": {
+  "start": "lite-server"
+}
 }
