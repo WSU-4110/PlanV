@@ -1,0 +1,31 @@
+{
+  "name": "planv",
+  "version": "1.0.0",
+  "description": "PlanV is an application designed to help users discover and manage bookings for various services like hotels, flights, and attractions. It aims to streamline the booking process and provide a seamless experience through third-party integrations.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/WSU-4110/PlanV.git"
+  },
+  "keywords": [
+    "booking",
+    "flight",
+    "PlanV",
+    "travel",
+    "reservations",
+    "hotel"
+  ],
+  "author": "Aminah",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/WSU-4110/PlanV/issues"
+  },
+  "homepage": "https://github.com/WSU-4110/PlanV#readme",
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  }
+}
