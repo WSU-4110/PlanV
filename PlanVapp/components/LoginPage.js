@@ -1,5 +1,3 @@
-// LoginPage.js
-
 import React, { useState } from 'react';
 import { View, Text, Image, StyleSheet, TextInput, TouchableOpacity, Alert, ScrollView } from 'react-native';
 import PlanVLogo from '../assets/PlanVLogo.png';
@@ -14,8 +12,10 @@ const LoginPage = ({ navigation }) => {
         signInWithEmailAndPassword(auth, username, password)
             .then((userCredential) => {
                 const user = userCredential.user;
+                console.log('Login Success:', user);
                 Alert.alert('Login Success', `Welcome back, ${user.email}!`);
-                // Navigate to another page or perform actions on successful login
+                // Navigate to the Home screen after successful login
+                navigation.navigate('Home');
             })
             .catch((error) => {
                 const errorMessage = error.message;

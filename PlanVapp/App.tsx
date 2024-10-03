@@ -2,6 +2,7 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LoginPage from './components/LoginPage';
+import HomePage from './screens/HomePage';
 import CreateAccountPage from './components/CreateAccountPage';
 import ForgotPasswordPage from './components/ForgotPasswordPage';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -34,6 +35,7 @@ function App(): React.JSX.Element {
           />
           <Stack.Navigator>
             <Stack.Screen name="Login" component={LoginPage} />
+            <Stack.Screen name="Home" component={HomePage} />
             <Stack.Screen name="CreateAccount" component={CreateAccountPage} />
             <Stack.Screen name="ForgotPassword" component={ForgotPasswordPage} />
           </Stack.Navigator>

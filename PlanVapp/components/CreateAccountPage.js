@@ -1,9 +1,8 @@
-// CreateAccountPage.js
-
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator, Alert, ScrollView } from 'react-native';
 import { auth } from '../firebaseConfig'; 
-import { createUserWithEmailAndPassword } from 'firebase/auth'; 
+import { createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth'; 
+import { firestore } from '@react-native-firebase/firestore'; // Import Firestore
 
 const CreateAccountPage = ({ navigation }) => {
     const [email, setEmail] = useState('');
@@ -15,9 +14,32 @@ const CreateAccountPage = ({ navigation }) => {
         createUserWithEmailAndPassword(auth, email, password)
             .then((userCredential) => {
                 const user = userCredential.user;
-                console.log('User created:', user);
-                Alert.alert('Success', 'Account created successfully!');
-                navigation.navigate('Login');
+
+                // Store user information in Firestore
+                firestore()
+                    .collection('users')
+                    .doc(user.uid) // Store user data by their unique UID
+                    .set({
+                        email: user.email,
+                        createdAt: new Date(),
+                    })
+                    .then(() => {
+                        console.log('User data stored in Firestore!');
+                    })
+                    .catch((error) => {
+                        console.error('Error storing user data:', error);
+                    });
+
+                // Send email verification
+                sendEmailVerification(user)
+                    .then(() => {
+                        Alert.alert('Success', 'Account created! Please check your email to verify your account.');
+                        navigation.navigate('Login');
+                    })
+                    .catch((verificationError) => {
+                        console.error('Verification email error:', verificationError);
+                        Alert.alert('Error', 'Failed to send verification email. Please try again.');
+                    });
             })
             .catch((error) => {
                 const errorMessage = error.message;
@@ -66,7 +88,7 @@ const styles = StyleSheet.create({
         flexGrow: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#f7f9fc', // Light background for a fresh look
+        backgroundColor: '#f7f9fc', 
         padding: 20,
     },
     headerText: {
@@ -84,10 +106,10 @@ const styles = StyleSheet.create({
         marginBottom: 15,
         paddingLeft: 15,
         backgroundColor: '#fff',
-        elevation: 2, // Shadow effect for input fields
+        elevation: 2, 
     },
     createButton: {
-        backgroundColor: '#000000', // Blue background for the button
+        backgroundColor: '#000000', 
         borderRadius: 5,
         height: 50,
         width: '100%',
