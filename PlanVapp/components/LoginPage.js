@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { View, Text, Image, StyleSheet, TextInput, TouchableOpacity, Alert, ScrollView } from 'react-native';
 import PlanVLogo from '../assets/logo2.png';
@@ -119,4 +120,3 @@ const styles = StyleSheet.create({
     },
 });
 
-export default LoginPage;
