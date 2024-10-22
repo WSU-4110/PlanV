@@ -3,6 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LoginPage from './components/LoginPage';
 import HomePage from './screens/HomePage';
+import Settings from './screens/Settings';
 import InitialBooking from './screens/Booking/InitialBooking';
 import HotelFilters from './screens/Booking/HotelFilters';
 import CarFilters from './screens/Booking/CarFilters';
@@ -63,6 +64,7 @@ function MainAppTabs() {
     <Tab.Navigator>
       <Tab.Screen name="Home" component={HomePage} />
       <Tab.Screen name="Booking" component={BookingStack} />
+      <Tab.Screen name="Settings" component={Settings} />
     </Tab.Navigator>
   );
 }
