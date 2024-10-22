@@ -1,11 +1,19 @@
 #import "AppDelegate.h"
-
+#import <React/RCTBridge.h>
+#import <React/RCTBundleURLProvider.h>
+#import <React/RCTRootView.h>
+#import <React/RCTView.h>
+#import <React/RCTBridgeModule.h>
+#import <React/RCTRootView.h>
+#import <React/RCTViewManager.h>
+#import <React/RNGestureHandler.h>
 #import <React/RCTBundleURLProvider.h>
 
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+  [RNGestureHandlerModule initialize];
   self.moduleName = @"PlanVapp";
   // You can add your custom initial props in the dictionary below.
   // They will be passed down to the ViewController used by React Native.
