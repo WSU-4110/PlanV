@@ -18,3 +18,4 @@ jobs:
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_PLANV_19842 }}
           channelId: live
           projectId: planv-19842
+          entryPoint: .github/workflows/firebase.json
