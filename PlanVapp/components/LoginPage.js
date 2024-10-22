@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, Image, StyleSheet, TextInput, TouchableOpacity, Alert, ScrollView } from 'react-native';
-import PlanVLogo from '../assets/PlanVLogo.png';
+import PlanVLogo from '../assets/logo2.png';
 import { auth } from '../firebaseConfig'; // Import auth from your config
 import { signInWithEmailAndPassword } from 'firebase/auth'; // Import sign-in method
 
@@ -72,8 +72,8 @@ const styles = StyleSheet.create({
         padding: 20,
     },
     logo: {
-        width: 250,
-        height: 200,
+        width: 300,
+        height: 300,
         resizeMode: 'contain',
         marginBottom: 20,
     },
