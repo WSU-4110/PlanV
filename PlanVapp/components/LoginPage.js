@@ -4,8 +4,8 @@ import LinearGradient from 'react-native-linear-gradient'; // Import LinearGradi
 import PlanVLogo from '../assets/PlanVLogo.png'; // PlanV logo image
 import KeyIcon from '../assets/key.png'; // Key icon for password
 import PadlockIcon from '../assets/padlock.png'; // Padlock icon for username
-// import { auth } from '../firebaseConfig'; // Import auth from your config
-// import { signInWithEmailAndPassword } from 'firebase/auth'; // Import sign-in method
+import { auth } from '../firebaseConfig'; // Import auth from your config
+import { signInWithEmailAndPassword } from 'firebase/auth'; // Import sign-in method
 
 const LoginPage = ({ navigation }) => {
     const [username, setUsername] = useState(''); // State for username
@@ -46,30 +46,24 @@ const LoginPage = ({ navigation }) => {
         return () => clearInterval(interval);
     }, [fadeAnim]);
 
-    const handleLogin = () => {
+    const handleLogin = async () => {
         // Check if username or password is empty
         if (username.trim() === '' || password.trim() === '') {
             Alert.alert('Input Error', 'Please enter your information before logging in.');
             return;
         }
 
-        signInWithEmailAndPassword(auth, username, password)
-            .then((userCredential) => {
-                const user = userCredential.user;
-                console.log('Login Success:', user);
-                Alert.alert('Login Success', `Welcome back, ${user.email}!`);
-                // Navigate to the Home screen after successful login
-                navigation.navigate('Home');
-            })
-            .catch((error) => {
-                const errorMessage = error.message;
-                // Check for specific error messages if needed
-                if (errorMessage.includes('auth/wrong-password') || errorMessage.includes('auth/user-not-found')) {
-                    Alert.alert('Login Failed', 'Incorrect username/password.');
-                } else {
-                    Alert.alert('Login Failed', errorMessage);
-                }
-            });
+        try {
+            const userCredential = await signInWithEmailAndPassword(auth, username, password);
+            const user = userCredential.user;
+            console.log('Login Success:', user);
+            Alert.alert('Login Success', `Welcome back, ${user.email}!`);
+            // Navigate to the Home screen after successful login
+            navigation.navigate('Home');
+        } catch (error) {
+            const errorMessage = error.message;
+            Alert.alert('Login Failed', errorMessage);
+        }
     };
 
     const handleCreateAccount = () => {
@@ -96,7 +90,6 @@ const LoginPage = ({ navigation }) => {
                     </Animated.Text>
                 </Animated.View>
                 <View style={styles.inputContainer}>
-                    {/* Padlock icon next to username */}
                     <Image source={PadlockIcon} style={styles.icon} />
                     <TextInput
                         placeholder="Username (Email)"
@@ -108,7 +101,6 @@ const LoginPage = ({ navigation }) => {
                     />
                 </View>
                 <View style={styles.inputContainer}>
-                    {/* Key icon next to password */}
                     <Image source={KeyIcon} style={styles.icon} />
                     <TextInput
                         placeholder="Password"

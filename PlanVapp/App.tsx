@@ -12,7 +12,10 @@ import CreateAccountPage from './components/CreateAccountPage';
 import ForgotPasswordPage from './components/ForgotPasswordPage';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-
+import { Provider } from "react-redux";
+import store from './store';
+import { ModalPortal } from "react-native-modals";
+import icons from "./constants/icons";
 
 import {
   StatusBar,
@@ -97,18 +100,21 @@ function App(): React.JSX.Element {
   }
 
   return (
-    <SafeAreaProvider>
-      <NavigationContainer>
-        <View style={[backgroundStyle, { flex: 1 }]}>
-          <StatusBar
-            barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-            backgroundColor={backgroundStyle.backgroundColor}
-          />
-          {/* Conditional rendering: Show login stack if not logged in, otherwise show main tabs */}
-          {isLoggedIn ? <MainAppTabs /> : <AuthStack />}
-        </View>
-      </NavigationContainer>
-    </SafeAreaProvider>
+    <Provider store={store}> 
+      <SafeAreaProvider>
+        <NavigationContainer>
+          <View style={[backgroundStyle, { flex: 1 }]}>
+            <StatusBar
+              barStyle={isDarkMode ? 'light-content' : 'dark-content'}
+              backgroundColor={backgroundStyle.backgroundColor}
+            />
+            {/* Conditional rendering: Show login stack if not logged in, otherwise show main tabs */}
+            {isLoggedIn ? <MainAppTabs /> : <AuthStack />}
+            <ModalPortal />
+          </View>
+        </NavigationContainer>
+      </SafeAreaProvider>
+    </Provider>
   );
 }
 
