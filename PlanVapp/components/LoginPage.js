@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, Image, StyleSheet, TextInput, TouchableOpacity, Alert, ScrollView, Animated } from 'react-native';
+import LinearGradient from 'react-native-linear-gradient'; // Import LinearGradient
 import PlanVLogo from '../assets/PlanVLogo.png'; // PlanV logo image
 import KeyIcon from '../assets/key.png'; // Key icon for password
 import PadlockIcon from '../assets/padlock.png'; // Padlock icon for username
-import { auth } from '../firebaseConfig'; // Import auth from your config
-import { signInWithEmailAndPassword } from 'firebase/auth'; // Import sign-in method
+// import { auth } from '../firebaseConfig'; // Import auth from your config
+// import { signInWithEmailAndPassword } from 'firebase/auth'; // Import sign-in method
 
 const LoginPage = ({ navigation }) => {
     const [username, setUsername] = useState(''); // State for username
@@ -76,76 +77,77 @@ const LoginPage = ({ navigation }) => {
     };
 
     return (
-        <ScrollView contentContainerStyle={styles.container}>
-            <Image 
-                source={PlanVLogo} 
-                style={styles.logo} 
-            />
-            <Animated.View style={[styles.flavorTextContainer, { opacity: fadeAnim }]}>
-                <Animated.Text 
-                    style={styles.flavorText}
-                    numberOfLines={2} // Limit to 2 lines
-                    ellipsizeMode="tail" // Add ellipses if text overflows
+        <LinearGradient 
+            colors={['#ff8cbf', '#6a99f5']} // Lighter pink and more blue gradient
+            style={styles.gradient} // Gradient style applied to the entire background
+        >
+            <ScrollView contentContainerStyle={styles.container}>
+                <Image 
+                    source={PlanVLogo} 
+                    style={styles.logo} 
+                />
+                <Animated.View style={[styles.flavorTextContainer, { opacity: fadeAnim }]}>
+                    <Animated.Text 
+                        style={styles.flavorText}
+                        numberOfLines={2} // Limit to 2 lines
+                        ellipsizeMode="tail" // Add ellipses if text overflows
+                    >
+                        {flavorTexts[flavorIndex]}
+                    </Animated.Text>
+                </Animated.View>
+                <View style={styles.inputContainer}>
+                    {/* Padlock icon next to username */}
+                    <Image source={PadlockIcon} style={styles.icon} />
+                    <TextInput
+                        placeholder="Username (Email)"
+                        style={styles.input}
+                        value={username}
+                        onChangeText={setUsername}
+                        autoCapitalize="none" // Prevent auto-capitalization
+                        keyboardType="email-address" // Email keyboard
+                    />
+                </View>
+                <View style={styles.inputContainer}>
+                    {/* Key icon next to password */}
+                    <Image source={KeyIcon} style={styles.icon} />
+                    <TextInput
+                        placeholder="Password"
+                        secureTextEntry
+                        style={styles.input}
+                        value={password}
+                        onChangeText={setPassword}
+                    />
+                </View>
+                <TouchableOpacity
+                    style={[styles.loginButton, isFlashing && styles.flashButton]} // Add flash style
+                    onPressIn={() => setIsFlashing(true)} // Start flash effect on press
+                    onPressOut={() => setIsFlashing(false)} // Stop flash effect on release
+                    onPress={handleLogin}
                 >
-                    {flavorTexts[flavorIndex]}
-                </Animated.Text>
-            </Animated.View>
-            <View style={styles.inputContainer}>
-                {/* Padlock icon next to username */}
-                <Image source={PadlockIcon} style={styles.icon} />
-                <TextInput
-                    placeholder="Username (Email)"
-                    style={styles.input}
-                    value={username}
-                    onChangeText={setUsername}
-                    autoCapitalize="none" // Prevent auto-capitalization
-                    keyboardType="email-address" // Email keyboard
-                />
-            </View>
-            <View style={styles.inputContainer}>
-                {/* Key icon next to password */}
-                <Image source={KeyIcon} style={styles.icon} />
-                <TextInput
-                    placeholder="Password"
-                    secureTextEntry
-                    style={styles.input}
-                    value={password}
-                    onChangeText={setPassword}
-                />
-            </View>
-            <TouchableOpacity
-                style={[
-                    styles.loginButton, 
-                    isFlashing && styles.flashButton
-                ]} // Add flash style
-                onPressIn={() => setIsFlashing(true)} // Start flash effect on press
-                onPressOut={() => setIsFlashing(false)} // Stop flash effect on release
-                onPress={handleLogin}
-            >
-                <Text style={[
-                    styles.loginButtonText, 
-                    isFlashing && styles.flashButtonText // Change text color in flash state
-                ]}>
-                    {isFlashing ? 'Happy travels!' : 'Login'} {/* Change button text */}
-                </Text>
-            </TouchableOpacity>
+                    <Text style={[styles.loginButtonText, isFlashing && styles.flashButtonText]}> 
+                        {isFlashing ? 'Happy travels!' : 'Login'} {/* Change button text */}
+                    </Text>
+                </TouchableOpacity>
 
-            <TouchableOpacity onPress={handleCreateAccount}>
-                <Text style={styles.createAccountText}>Create Account</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => navigation.navigate('ForgotPassword')}>
-                <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
-            </TouchableOpacity>
-        </ScrollView>
+                <TouchableOpacity onPress={handleCreateAccount}>
+                    <Text style={styles.createAccountText}>Create Account</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => navigation.navigate('ForgotPassword')}>
+                    <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
+                </TouchableOpacity>
+            </ScrollView>
+        </LinearGradient>
     );
 };
 
 const styles = StyleSheet.create({
+    gradient: {
+        flex: 1, // Ensure gradient covers entire screen
+    },
     container: {
         flexGrow: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#f7f9fc',
         padding: 20,
     },
     logo: {
