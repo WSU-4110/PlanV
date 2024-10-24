@@ -21,7 +21,8 @@ const Weather = () => {
         setWeatherData(data);
         setError(null);
         fetchAirQuality(data.coord.lat, data.coord.lon);
-        setBackgroundColor(getBackgroundColor(data.weather[0].main)); // Update background based on condition
+        // this line of code changes the color of background.
+        setBackgroundColor(getBackgroundColor(data.weather[0].main)); 
       } else {
         setError(data.message);
         setWeatherData(null);
@@ -95,24 +96,24 @@ const Weather = () => {
   const getBackgroundColor = (condition) => {
     switch (condition) {
       case 'Clear':
-        return '#87CEEB'; // Clear sky - sky blue
+        return '#87CEEB'; 
       case 'Rain':
-        return '#ADD8E6'; // Rainy - baby blue
+        return '#ADD8E6'; 
       case 'Clouds':
-        return '#D3D3D3'; // Cloudy - light gray
+        return '#D3D3D3'; 
       case 'Snow':
-        return '#F0F8FF'; // Snow - light white
+        return '#F0F8FF'; 
       case 'Drizzle':
-        return '#B0C4DE'; // Drizzle - light steel blue
+        return '#B0C4DE'; 
       case 'Thunderstorm':
-        return '#778899'; // Thunderstorm - slate gray
+        return '#778899'; 
       case 'Mist':
       case 'Fog':
-        return '#C0C0C0'; // Mist/Fog - silver
+        return '#C0C0C0';
       case 'Haze':
-        return '#F5F5DC'; // Haze - beige
+        return '#F5F5DC'; 
       default:
-        return '#F0F0F0'; // Default light gray
+        return '#F0F0F0'; 
     }
   };
 
@@ -129,7 +130,7 @@ const Weather = () => {
       />
 
       <TouchableOpacity style={styles.button} onPress={fetchWeather}>
-        <Text style={styles.buttonText}>Get Weather</Text>
+        <Text style={styles.buttonText}>Search</Text>
       </TouchableOpacity>
 
       {error && <Text style={styles.error}>{error}</Text>}
@@ -242,7 +243,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Arial',
   },
   temperature: {
-    fontSize: 48, // Keep temperature large
+    fontSize: 48, 
     fontWeight: 'bold',
     fontFamily: 'Helvetica',
   },
