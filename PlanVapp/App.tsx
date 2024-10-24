@@ -8,6 +8,8 @@ import InitialBooking from './screens/Booking/InitialBooking';
 import HotelFilters from './screens/Booking/HotelFilters';
 import CarFilters from './screens/Booking/CarFilters';
 import FlightFilters from './screens/Booking/FlightFilters';
+import PaymentScreen from './screens/Payment';  // Import PaymentScreen
+import DocumentsScreen from './screens/Documents'; // Import DocumentsScreen
 import CreateAccountPage from './components/CreateAccountPage';
 import ForgotPasswordPage from './components/ForgotPasswordPage';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -15,7 +17,6 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Provider } from "react-redux";
 import store from './store';
 import { ModalPortal } from "react-native-modals";
-import icons from "./constants/icons";
 
 import {
   StatusBar,
@@ -33,6 +34,7 @@ import { auth } from './firebaseConfig';
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
+// Auth stack for login, create account, and forgot password
 function AuthStack() {
   return (
     <Stack.Navigator>
@@ -51,6 +53,8 @@ function AuthStack() {
     </Stack.Navigator>
   );
 }
+
+// Booking stack for booking screens
 function BookingStack() {
   return (
     <Stack.Navigator>
@@ -62,16 +66,29 @@ function BookingStack() {
   );
 }
 
+// Settings stack with Payment and Documents screens
+function SettingsStack() {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen name="Settings" component={Settings} />
+      <Stack.Screen name="Payment" component={PaymentScreen} />
+      <Stack.Screen name="Documents" component={DocumentsScreen} />
+    </Stack.Navigator>
+  );
+}
+
+// Main tabs for Home, Booking, and Settings
 function MainAppTabs() {
   return (
     <Tab.Navigator>
       <Tab.Screen name="Home" component={HomePage} />
       <Tab.Screen name="Booking" component={BookingStack} />
-      <Tab.Screen name="Settings" component={Settings} />
+      <Tab.Screen name="Settings" component={SettingsStack} /> {/* Wrapped Settings in a stack */}
     </Tab.Navigator>
   );
 }
 
+// Main App component
 function App(): React.JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -80,8 +97,6 @@ function App(): React.JSX.Element {
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
-
-  
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -108,7 +123,6 @@ function App(): React.JSX.Element {
               barStyle={isDarkMode ? 'light-content' : 'dark-content'}
               backgroundColor={backgroundStyle.backgroundColor}
             />
-            {/* Conditional rendering: Show login stack if not logged in, otherwise show main tabs */}
             {isLoggedIn ? <MainAppTabs /> : <AuthStack />}
             <ModalPortal />
           </View>
