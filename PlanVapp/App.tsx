@@ -9,7 +9,6 @@ import HotelFilters from './screens/Booking/HotelFilters';
 import CarFilters from './screens/Booking/CarFilters';
 import FlightFilters from './screens/Booking/FlightFilters';
 import PaymentScreen from './screens/Payment';  // Import PaymentScreen
-import DocumentsScreen from './screens/Documents'; // Import DocumentsScreen
 import CreateAccountPage from './components/CreateAccountPage';
 import ForgotPasswordPage from './components/ForgotPasswordPage';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -17,6 +16,8 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Provider } from "react-redux";
 import store from './store';
 import { ModalPortal } from "react-native-modals";
+import icons from "./constants/icons";
+import Weather from './screens/Weather';
 
 import {
   StatusBar,
@@ -27,7 +28,7 @@ import {
 } from 'react-native';
 
 import { Colors } from 'react-native/Libraries/NewAppScreen';
-import { onAuthStateChanged } from 'firebase/auth';
+import { applyActionCode, onAuthStateChanged } from 'firebase/auth';
 import { auth } from './firebaseConfig';
 
 
@@ -83,7 +84,8 @@ function MainAppTabs() {
     <Tab.Navigator>
       <Tab.Screen name="Home" component={HomePage} />
       <Tab.Screen name="Booking" component={BookingStack} />
-      <Tab.Screen name="Settings" component={SettingsStack} /> {/* Wrapped Settings in a stack */}
+      <Tab.Screen name="Settings" component={Settings} />
+      <Tab.Screen name="Weather" component={Weather} />
     </Tab.Navigator>
   );
 }
