@@ -17,7 +17,6 @@ import store from './store';
 import { ModalPortal } from "react-native-modals";
 import icons from "./constants/icons";
 import Weather from './screens/Weather';
-import Payment from './screens/Payment';
 
 import {
   StatusBar,
@@ -28,14 +27,13 @@ import {
 } from 'react-native';
 
 import { Colors } from 'react-native/Libraries/NewAppScreen';
-import { applyActionCode, onAuthStateChanged } from 'firebase/auth';
+import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from './firebaseConfig';
 
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
-// Auth stack for login, create account, and forgot password
 function AuthStack() {
   return (
     <Stack.Navigator>
@@ -54,8 +52,6 @@ function AuthStack() {
     </Stack.Navigator>
   );
 }
-
-// Booking stack for booking screens
 function BookingStack() {
   return (
     <Stack.Navigator>
@@ -67,19 +63,6 @@ function BookingStack() {
   );
 }
 
-// Settings stack with Payment and Documents screens
-function SettingsStack() {
-  return (
-    <Stack.Navigator>
-      <Stack.Screen name="Settings" component={Settings} />
-      <Stack.Screen name="Payment" component={Settings} />
-      <Stack.Screen name="Documents" component={Settings} />
-
-    </Stack.Navigator>
-  );
-}
-
-// Main tabs for Home, Booking, and Settings
 function MainAppTabs() {
   return (
     <Tab.Navigator>
@@ -91,7 +74,6 @@ function MainAppTabs() {
   );
 }
 
-// Main App component
 function App(): React.JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -100,6 +82,8 @@ function App(): React.JSX.Element {
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
+
+  
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -126,6 +110,7 @@ function App(): React.JSX.Element {
               barStyle={isDarkMode ? 'light-content' : 'dark-content'}
               backgroundColor={backgroundStyle.backgroundColor}
             />
+            {/* Conditional rendering: Show login stack if not logged in, otherwise show main tabs */}
             {isLoggedIn ? <MainAppTabs /> : <AuthStack />}
             <ModalPortal />
           </View>
