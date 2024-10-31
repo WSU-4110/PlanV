@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, Image, StyleSheet, TextInput, TouchableOpacity, Alert, ScrollView, Animated } from 'react-native';
 import PlanVLogo from '../assets/PlanVLogo.png'; // PlanV logo image
