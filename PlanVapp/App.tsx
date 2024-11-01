@@ -18,6 +18,7 @@ import { ModalPortal } from "react-native-modals";
 import icons from "./constants/icons";
 import Weather from './screens/Weather';
 import Payment from './screens/Payment';
+import { FilterProvider } from './components/FilterContext';
 
 import {
   StatusBar,
@@ -58,12 +59,14 @@ function AuthStack() {
 // Booking stack for booking screens
 function BookingStack() {
   return (
-    <Stack.Navigator>
-      <Stack.Screen name="InitialBooking" component={InitialBooking} />
-      <Stack.Screen name="FlightFilters" component={FlightFilters} />
-      <Stack.Screen name="HotelFilters" component={HotelFilters} />
-      <Stack.Screen name="CarFilters" component={CarFilters} />
-    </Stack.Navigator>
+    <FilterProvider>
+      <Stack.Navigator>
+        <Stack.Screen name="InitialBooking" component={InitialBooking} />
+        <Stack.Screen name="FlightFilters" component={FlightFilters} />
+        <Stack.Screen name="HotelFilters" component={HotelFilters} />
+        <Stack.Screen name="CarFilters" component={CarFilters} />
+      </Stack.Navigator>
+    </FilterProvider>
   );
 }
 
