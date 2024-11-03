@@ -1,90 +1,92 @@
-import { Pressable, StyleSheet, Text, View, Image } from "react-native";
-import React from "react";
-import { useNavigation } from "@react-navigation/native"; // Import useNavigation
-import icons from "../constants/icons"; // Ensure the correct path
+// Header.js
 
-const Header = () => {
-  const navigation = useNavigation(); // Get the navigation object
+import React, { useState } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { useNavigation } from '@react-navigation/native'; // Make sure this is imported
+import icons from '../constants/icons';
+
+const Header = ({ handleSelection }) => {
+  const navigation = useNavigation();
+  const [selectedFilter, setSelectedFilter] = useState("Hotel");
+
+  const handlePress = (option) => {
+    // Update selected filter state
+    setSelectedFilter(option);
+    
+    // Trigger handleSelection to update message in InitialBooking
+    handleSelection(option);
+
+    // You could add any additional logic here, e.g., specific navigation if needed
+  };
 
   return (
-    <View
-      style={{
-        backgroundColor: "#000000",
-        height: 65,
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-around",
-      }}
-    >
-      <Pressable
-        onPress={() => navigation.navigate("HotelFilters")} // Navigate to HotelFilters
-        style={{
-          flexDirection: "row",
-          alignItems: "center",
-          borderColor: "white",
-          borderWidth: 1,
-          borderRadius: 25,
-          padding: 8,
-        }}
+    <View style={styles.headerContainer}>
+      <TouchableOpacity 
+        style={[
+          styles.button,
+          selectedFilter === 'Flight' && styles.selectedButton,
+        ]}
+        onPress={() => handlePress('Flight')}
       >
-        <Image source={icons.bed} style={{ width: 24, height: 24, tintColor: 'white' }} />
-        <Text
-          style={{
-            marginLeft: 8,
-            fontWeight: "bold",
-            color: "white",
-            fontSize: 15,
-          }}
-        >
-          Stays
-        </Text>
-      </Pressable>
-
-      <Pressable
-        onPress={() => navigation.navigate("FlightFilters")} // Navigate to FlightFilters
-        style={{
-          flexDirection: "row",
-          alignItems: "center",
-        }}
+        <Image source={icons.airplane} style={styles.icon} />
+        <Text style={styles.buttonText}>Flight</Text>
+      </TouchableOpacity>
+      
+      <TouchableOpacity 
+        style={[
+          styles.button,
+          selectedFilter === 'Hotel' && styles.selectedButton,
+        ]}
+        onPress={() => handlePress('Hotel')}
       >
-        <Image source={icons.airplane} style={{ width: 26, height: 26, tintColor: 'white' }} />
-        <Text
-          style={{
-            marginLeft: 8,
-            fontWeight: "bold",
-            color: "white",
-            fontSize: 15,
-          }}
-        >
-          Flights
-        </Text>
-      </Pressable>
-
-      <Pressable
-        onPress={() => navigation.navigate("CarFilters")} // Navigate to CarFilters
-        style={{
-          flexDirection: "row",
-          alignItems: "center",
-        }}
+        <Image source={icons.bed} style={styles.icon} />
+        <Text style={styles.buttonText}>Hotel</Text>
+      </TouchableOpacity>
+      
+      <TouchableOpacity 
+        style={[
+          styles.button,
+          selectedFilter === 'Car Rental' && styles.selectedButton,
+        ]}
+        onPress={() => handlePress('Car Rental')}
       >
-        <Image source={icons.car} style={{ width: 26, height: 26, tintColor: 'white' }} />
-        <Text
-          style={{
-            marginLeft: 8,
-            fontWeight: "bold",
-            color: "white",
-            fontSize: 15,
-          }}
-        >
-          Car Rental
-        </Text>
-      </Pressable>
-
-      {/* Add more Pressables as needed for other filters */}
+        <Image source={icons.car} style={styles.icon} />
+        <Text style={styles.buttonText}>Car Rental</Text>
+      </TouchableOpacity>
     </View>
   );
 };
 
-export default Header;
+const styles = StyleSheet.create({
+  headerContainer: {
+    backgroundColor: "#000000",
+    height: 65,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-around",
+  },
+  button: {
+    flexDirection: "row",
+    alignItems: "center",
+    borderColor: "transparent",
+    borderWidth: 1,
+    borderRadius: 25,
+    padding: 8,
+  },
+  selectedButton: {
+    borderColor: "white",
+  },
+  icon: {
+    width: 26,
+    height: 26,
+    tintColor: "white",
+  },
+  buttonText: {
+    marginLeft: 8,
+    fontWeight: "bold",
+    color: "white",
+    fontSize: 15,
+  },
+});
 
-const styles = StyleSheet.create({});
+export default Header;
