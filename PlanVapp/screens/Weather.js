@@ -1,15 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, ImageBackground } from 'react-native';
 
 const Weather = () => {
   const [city, setCity] = useState('');
-  const [weatherData, setWeatherData] = useState(null);
-  const [airQuality, setAirQuality] = useState(null); 
+  const [weatherData, setWeatherData] = useState(0);
+  const [airQuality, setAirQuality] = useState('');
   const [error, setError] = useState(null);
-  const [isCelsius, setIsCelsius] = useState(true); 
-  const [backgroundColor, setBackgroundColor] = useState('#F0F0F0'); 
+  const [isCelsius, setIsCelsius] = useState(true);
+  const [time, setTime] = useState(new Date());
 
-  const API_KEY = 'e1fcf1f73f2c067c1e69c87dc6650ce4'; 
+  const API_KEY = 'e1fcf1f73f2c067c1e69c87dc6650ce4';
+
+  useEffect(() => {
+    const timer = setInterval(() => setTime(new Date()), 1000);
+    return () => clearInterval(timer);
+  }, []);
 
   const fetchWeather = async () => {
     try {
@@ -21,264 +26,211 @@ const Weather = () => {
         setWeatherData(data);
         setError(null);
         fetchAirQuality(data.coord.lat, data.coord.lon);
-        // this line of code changes the color of background.
-        setBackgroundColor(getBackgroundColor(data.weather[0].main)); 
       } else {
         setError(data.message);
-        setWeatherData(null);
-        setAirQuality(null);
+        setWeatherData(0);
+        setAirQuality('');
       }
     } catch (err) {
-      setError('Failed to fetch weather data.');
-      setWeatherData(null);
-      setAirQuality(null);
+      setError('Contact us for this error. Could not fetch weather.');
+      setWeatherData(0); 
+      setAirQuality('');
     }
+    setCity('');
   };
 
   const fetchAirQuality = async (lat, lon) => {
-    try {
-      const response = await fetch(
-        `https://api.openweathermap.org/data/2.5/air_pollution?lat=${lat}&lon=${lon}&appid=${API_KEY}`
-      );
-      const data = await response.json();
-      setAirQuality(data.list[0].main.aqi);
-    } catch (err) {
-      console.error('Failed to fetch air quality data.');
-    }
+    const response = await fetch(
+      `https://api.openweathermap.org/data/2.5/air_pollution?lat=${lat}&lon=${lon}&appid=${API_KEY}`
+    );
+    const data = await response.json();
+    const aqi = data.list[0].main.aqi;
+    const aqiLabel = getAqiLabel(aqi);
+    setAirQuality(aqiLabel);
   };
 
+  const getAqiLabel = (aqi) => {
+    switch (aqi) {
+      case 1: return 'Good';
+      case 2: return 'Fair';
+      case 3: return 'Moderate';
+      case 4: return 'Poor';
+      case 5: return 'Very Poor';
+      default: return 'Unknown';
+    }
+  };
+  
   const toggleTemperature = () => {
     setIsCelsius(!isCelsius);
   };
 
-  const getFlavorText = (condition) => {
-    switch (condition) {
-      case 'Clear':
-        return "It's a clear sky day! Perfect for outdoor activities.";
-      case 'Rain':
-        return "Rainy day vibes. Time to cozy up or grab an umbrella!";
-      case 'Clouds':
-        return "Cloudy skies ahead. Not too bright, not too gloomy.";
-      case 'Snow':
-        return "Snowflakes are falling. Winter wonderland mode activated!";
-      case 'Drizzle':
-        return "A light drizzle to keep things cool.";
-      case 'Thunderstorm':
-        return "Storm's brewing! Best to stay indoors.";
-      case 'Mist':
-      case 'Fog':
-        return "The mist is thick, creating an air of mystery.";
-      case 'Haze':
-        return "Hazy views, but life goes on.";
-      default:
-        return "Interesting weather today. Enjoy it!";
+  const getBackgroundImage = () => {
+    if (weatherData !== 0) {
+      const condition = weatherData.weather[0].main.toLowerCase();
+      switch (condition) {
+        case 'clouds': return require('../assets/clouds.jpg');
+        case 'fog': return require('../assets/foggy.jpg');
+        case 'rain': return require('../assets/rainy.jpg');
+        case 'snow': return require('../assets/snowy.jpg');
+        case 'thunderstorm': return require('../assets/stormy.jpg');
+        default: return require('../assets/clouds.jpg');
+      }
     }
-  };
-
-  const getAirQualityDescription = (aqi) => {
-    if (!aqi) return 'Air quality data unavailable.';
-    switch (aqi) {
-      case 1:
-        return 'Air quality is excellent.';
-      case 2:
-        return 'Air quality is good.';
-      case 3:
-        return 'Air quality is satisfactory.';
-      case 4:
-        return 'Air quality is poor.';
-      case 5:
-        return 'Air quality is very poor.';
-      default:
-        return 'Air quality data cannot be fetched.';
-    }
-  };
-
-  const getBackgroundColor = (condition) => {
-    switch (condition) {
-      case 'Clear':
-        return '#87CEEB'; 
-      case 'Rain':
-        return '#ADD8E6'; 
-      case 'Clouds':
-        return '#D3D3D3'; 
-      case 'Snow':
-        return '#F0F8FF'; 
-      case 'Drizzle':
-        return '#B0C4DE'; 
-      case 'Thunderstorm':
-        return '#778899'; 
-      case 'Mist':
-      case 'Fog':
-        return '#C0C0C0';
-      case 'Haze':
-        return '#F5F5DC'; 
-      default:
-        return '#F0F0F0'; 
-    }
+    return require('../assets/clouds.jpg');
   };
 
   return (
-    <ScrollView contentContainerStyle={[styles.container, { backgroundColor }]}>
-      <Text style={styles.title}></Text>
+    <ImageBackground
+      source={getBackgroundImage()}
+      style={styles.background}
+      imageStyle={styles.backgroundImage}
+    >
+      <ScrollView contentContainerStyle={styles.container}>
+        <TextInput
+          style={styles.input}
+          placeholder="Enter city"
+          value={city}
+          onChangeText={setCity}
+          placeholderTextColor="#888"
+        />
 
-      <TextInput
-        style={styles.input}
-        placeholder="Enter city"
-        value={city}
-        onChangeText={setCity}
-        placeholderTextColor="#888"
-      />
-
-      <TouchableOpacity style={styles.button} onPress={fetchWeather}>
-        <Text style={styles.buttonText}>Search</Text>
-      </TouchableOpacity>
-
-      {error && <Text style={styles.error}>{error}</Text>}
-
-      {weatherData && (
-        <View style={styles.weatherContainer}>
-          <Text style={styles.city}>{weatherData.name}</Text>
-          <Text style={styles.description}>
-            {weatherData.weather[0].description}
-          </Text>
-
-          <TouchableOpacity onPress={toggleTemperature}>
-            <Text style={styles.temperature}>
-              {isCelsius
-                ? `${Math.round(weatherData.main.temp)}°C`
-                : `${Math.round((weatherData.main.temp * 9) / 5 + 32)}°F`}
-            </Text>
+        {city.length > 0 && (
+          <TouchableOpacity style={styles.button} onPress={fetchWeather}>
+            <Text style={styles.buttonText}>Search</Text>
           </TouchableOpacity>
+        )}
 
-          <Text style={styles.feelsLike}>
-            Feels Like: {isCelsius
-              ? `${Math.round(weatherData.main.feels_like)}°C`
-              : `${Math.round((weatherData.main.feels_like * 9) / 5 + 32)}°F`}
-          </Text>
+        {error && <Text style={styles.error}>{error}</Text>}
 
-          <Text style={styles.details}>
-            Humidity: {weatherData.main.humidity}%
-          </Text>
-          <Text style={styles.details}>
-            Wind Speed: {weatherData.wind.speed} m/s
-          </Text>
+        {weatherData !== 0 && (
+          <View style={styles.weatherContent}>
+            <Text style={styles.city}>{weatherData.name}</Text>
+            <Text style={styles.description}>
+              {weatherData.weather[0].description.charAt(0).toUpperCase() + weatherData.weather[0].description.slice(1)}
+            </Text>
 
-          <Text style={styles.time}>
-            Current Time: {new Date(weatherData.dt * 1000).toLocaleTimeString()}
-          </Text>
+            <TouchableOpacity onPress={toggleTemperature}>
+              <Text style={styles.temperature}>
+                {isCelsius
+                  ? `${Math.round(weatherData.main.temp)}°C`
+                  : `${Math.round((weatherData.main.temp * 9) / 5 + 32)}°F`}
+              </Text>
+            </TouchableOpacity>
 
-          <Text style={styles.airQuality}>
-            {getAirQualityDescription(airQuality)}
-          </Text>
+            <Text style={styles.feelsLike}>
+              Feels Like: {isCelsius
+                ? `${Math.round(weatherData.main.feels_like)}°C`
+                : `${Math.round((weatherData.main.feels_like * 9) / 5 + 32)}°F`}
+            </Text>
 
-          <Text style={styles.flavorText}>
-            {getFlavorText(weatherData.weather[0].main)}
-          </Text>
-        </View>
-      )}
-    </ScrollView>
+            <Text style={styles.details}>Humidity: {weatherData.main.humidity}%</Text>
+            <Text style={styles.details}>Wind Speed: {weatherData.wind.speed} m/s</Text>
+            <Text style={styles.time}>Current Time: {time.toLocaleTimeString()}</Text>
+            <Text style={styles.airQuality}>Air Quality: {airQuality}</Text>
+            <Text style={styles.details}>
+              Sunrise: {new Date(weatherData.sys.sunrise * 1000).toLocaleTimeString()}
+            </Text>
+            <Text style={styles.details}>
+              Sunset: {new Date(weatherData.sys.sunset * 1000).toLocaleTimeString()}
+            </Text>
+          </View>
+        )}
+      </ScrollView>
+    </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
+  background: {
+    flex: 1,
+    resizeMode: 'cover',
+    justifyContent: 'center',
+  },
+  backgroundImage: {
+    opacity: 0.9,
+  },
   container: {
     flexGrow: 1,
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
   },
-  title: {
-    fontSize: 26, // Slightly larger font for the title
-    fontWeight: 'bold',
-    marginBottom: 20,
-    color: '#333',
-    fontFamily: 'Helvetica',
-  },
   input: {
     height: 45,
-    borderColor: '#aaa',
-    borderWidth: 1,
-    paddingHorizontal: 10,
+    backgroundColor: '#E0E0E0',
+    paddingHorizontal: 15,
     marginBottom: 20,
     width: '100%',
-    borderRadius: 8,
-    backgroundColor: '#fff',
+    borderRadius: 12,
     fontSize: 16,
     color: '#333',
-    fontFamily: 'Arial',
+    fontFamily: 'Gotham',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
   button: {
     backgroundColor: '#1E90FF',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 8,
+    paddingVertical: 12,
+    paddingHorizontal: 25,
+    borderRadius: 12,
     marginBottom: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
   buttonText: {
     color: '#fff',
     fontSize: 18,
-    fontWeight: 'bold',
-    fontFamily: 'Arial',
+    fontFamily: 'Gotham',
   },
-  weatherContainer: {
+  weatherContent: {
     alignItems: 'center',
-    marginTop: 20,
-    backgroundColor: '#fff',
+    backgroundColor: 'rgba(255, 255, 255, 0.5)',
     padding: 20,
-    borderRadius: 10,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 2,
-    elevation: 2,
+    borderRadius: 12,
   },
   city: {
     fontSize: 24,
-    fontWeight: 'bold',
-    fontFamily: 'Helvetica',
+    color: '#333',
+    fontFamily: 'Gotham',
   },
   description: {
     fontSize: 18,
-    textTransform: 'capitalize',
-    fontFamily: 'Arial',
+    marginVertical: 5,
+    color: '#555',
+    fontFamily: 'Gotham',
   },
   temperature: {
-    fontSize: 48, 
-    fontWeight: 'bold',
-    fontFamily: 'Helvetica',
+    fontSize: 32,
+    marginVertical: 10,
+    color: '#333',
+    fontFamily: 'Gotham',
   },
   feelsLike: {
     fontSize: 18,
-    marginTop: 10,
-    fontFamily: 'Arial',
+    color: '#333',
+    fontFamily: 'Gotham',
   },
   details: {
     fontSize: 16,
-    marginTop: 10,
-    fontFamily: 'Arial',
+    color: '#333',
+    fontFamily: 'Gotham',
   },
   time: {
-    fontSize: 18,
-    marginTop: 10,
-    fontFamily: 'Arial',
+    fontSize: 16,
+    color: '#333',
+    fontFamily: 'Gotham',
   },
   airQuality: {
-    fontSize: 18,
-    marginTop: 10,
-    fontStyle: 'italic',
-    fontFamily: 'Arial',
-  },
-  flavorText: {
-    fontSize: 18,
-    marginTop: 15,
-    textAlign: 'center',
-    fontFamily: 'Arial',
-  },
-  error: {
-    color: 'red',
-    marginBottom: 20,
     fontSize: 16,
-    fontFamily: 'Arial',
+    color: '#333',
+    marginTop: 10,
+    fontFamily: 'Gotham',
   },
 });
 
