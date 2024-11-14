@@ -8,6 +8,7 @@
 #import <React/RCTViewManager.h>
 #import <React/RNGestureHandler.h>
 #import <React/RCTBundleURLProvider.h>
+#import <GoogleMaps/GoogleMaps.h>
 
 @implementation AppDelegate
 
@@ -34,6 +35,11 @@
 #else
   return [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
 #endif
+}
+
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    [GMSServices provideAPIKey:@"YOUR_API_KEY"]; // Add your Google Maps API key here
+    return YES;
 }
 
 @end
