@@ -37,10 +37,8 @@ describe('Background Image Selection Tests', () => {
       );
 
     const { getByPlaceholderText, getByText, findByTestId } = render(<Weather />);
-
     fireEvent.changeText(getByPlaceholderText('Enter city'), 'Berlin');
     fireEvent.press(getByText('Search'));
-
     const backgroundImage = await findByTestId('background-image');
     expect(backgroundImage.props.source).toEqual( 
         "mocked-rainy-image"
