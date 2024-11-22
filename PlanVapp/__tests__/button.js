@@ -35,19 +35,19 @@ describe('Button fetches data test', () => {
 
     const cityName = await findByText('Berlin');
     expect(cityName).toBeTruthy();
-
     expect(global.fetch).toHaveBeenCalledTimes(2);
+    
     expect(global.fetch).toHaveBeenCalledWith(
       expect.stringContaining('api.openweathermap.org/data/2.5/weather?q=Berlin'),
     );
+    
     expect(global.fetch).toHaveBeenCalledWith(
       expect.stringContaining('api.openweathermap.org/data/2.5/air_pollution'),
     );
+    
   });
-
   test('disables search button when no city is entered', () => {
     const { queryByText } = render(<Weather />);
-
     const searchButton = queryByText('Search');
     expect(searchButton).toBeNull();
   });
