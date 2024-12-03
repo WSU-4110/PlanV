@@ -1,6 +1,6 @@
 import React from 'react';
 import { Linking } from 'react-native';
-import renderer from 'react-test-renderer';
+import { render, fireEvent } from '@testing-library/react-native';
 import SettingsScreen from '../screens/Settings';
 
 jest.mock('react-native/Libraries/Linking/Linking', () => ({
