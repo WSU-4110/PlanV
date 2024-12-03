@@ -21,6 +21,11 @@ jobs:
       with:
         node-version: 16
 
+    - name: Skip react-native-reanimated in Podfile
+      run: |
+        cd PlanVapp/ios
+        sed -i.bak '/react-native-reanimated/d' Podfile
+
     - name: Install Dependencies
       run: npm install
 
