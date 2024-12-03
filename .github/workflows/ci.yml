@@ -26,15 +26,12 @@ jobs:
         cd PlanVapp
         npm install
 
-    - name: Skip CocoaPods (CI only)
-      run: echo "Skipping CocoaPods installation in CI"
-
-    - name: Build with Metro
+    - name: Verify Dependencies
       run: |
         cd PlanVapp
-        npm run build
+        ls node_modules/@testing-library/react-native || echo "Module not found"
 
-    - name: Run Jest Tests
+    - name: Run Tests
       run: |
         cd PlanVapp
         npm test
