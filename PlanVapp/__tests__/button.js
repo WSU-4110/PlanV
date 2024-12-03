@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react-native';
-import Weather from '../../screens/Weather';
+import Weather from '../screens/Weather';
 
 describe('Button fetches data test', () => {
   beforeEach(() => {
