@@ -81,9 +81,11 @@ const Weather = () => {
 
   return (
     <ImageBackground
-      source={getBackgroundImage()}
-      style={styles.background}
-      imageStyle={styles.backgroundImage}
+    testID="background-image"
+    source={getBackgroundImage()}
+    style={styles.background}
+    imageStyle={styles.backgroundImage}
+      
     >
       <ScrollView contentContainerStyle={styles.container}>
         <TextInput
