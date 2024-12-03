@@ -22,13 +22,19 @@ jobs:
         node-version: 16
 
     - name: Install Dependencies
-      run: npm install
+      run: |
+        cd PlanVapp
+        npm install
 
     - name: Skip CocoaPods (CI only)
       run: echo "Skipping CocoaPods installation in CI"
 
     - name: Build with Metro
-      run: npm run build
+      run: |
+        cd PlanVapp
+        npm run build
 
     - name: Run Jest Tests
-      run: npm test
+      run: |
+        cd PlanVapp
+        npm test
