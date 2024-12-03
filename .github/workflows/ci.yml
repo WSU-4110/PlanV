@@ -20,12 +20,13 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: 16
+
     - name: Install Dependencies
       run: npm install
 
     - name: Install CocoaPods
       run: |
-        cd ios
+        cd PlanVapp/ios
         pod install
 
     - name: Build with Metro
@@ -33,10 +34,11 @@ jobs:
 
     - name: Build with Xcode
       run: |
-        xcodebuild -workspace ios/PlanV.xcworkspace \
+        cd PlanVapp/ios
+        xcodebuild -workspace PlanV.xcworkspace \
           -scheme PlanV \
           -configuration Release \
-          -derivedDataPath ios/build
+          -derivedDataPath build
 
     - name: Run Jest Tests
       run: npm test
