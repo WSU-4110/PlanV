@@ -61,6 +61,7 @@
     "@react-native/eslint-config": "0.75.3",
     "@react-native/metro-config": "0.75.3",
     "@react-native/typescript-config": "0.75.3",
+    "@testing-library/react-native": "^12.4.5",
     "@types/react": "^18.2.6",
     "@types/react-native-modals": "^0.22.4",
     "@types/react-test-renderer": "^18.0.0",
@@ -77,4 +78,5 @@
   "engines": {
     "node": ">=18"
   }
+
 }
