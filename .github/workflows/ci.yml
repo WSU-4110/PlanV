@@ -26,6 +26,11 @@ jobs:
         cd PlanVapp/ios
         sed -i.bak '/react-native-reanimated/d' Podfile
 
+    - name: Skip RNFBAnalytics in Podfile (CI only)
+      run: |
+        cd PlanVapp/ios
+        sed -i.bak '/@react-native-firebase\/analytics/d' Podfile
+
     - name: Install Dependencies
       run: npm install
 
