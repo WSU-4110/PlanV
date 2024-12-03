@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, fireEvent, act } from '@testing-library/react-native';
-import Weather from '../../screens/Weather';
+import Weather from '../screens/Weather';
 
 describe('Time Update Tests', () => {
   beforeEach(() => {
