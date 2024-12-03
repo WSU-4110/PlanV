@@ -1,5 +1,4 @@
 name: CI for PlanV
-
 on:
   push:
     branches:
@@ -7,30 +6,25 @@ on:
   pull_request:
     branches:
       - main
-
 jobs:
   build-and-test:
     runs-on: macos-latest
-
     steps:
     - name: Checkout Code
       uses: actions/checkout@v3
-
     - name: Set up Node.js
       uses: actions/setup-node@v3
       with:
         node-version: 16
-
     - name: Install Dependencies
       run: |
         cd PlanVapp
         npm install
-
+        npm install --save-dev @testing-library/react-native
     - name: Verify Dependencies
       run: |
         cd PlanVapp
         ls node_modules/@testing-library/react-native || echo "Module not found"
-
     - name: Run Tests
       run: |
         cd PlanVapp
