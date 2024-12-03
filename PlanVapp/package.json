@@ -8,8 +8,8 @@
     "lint": "eslint .",
     "start": "react-native start",
     "build": "react-native build",
-    "test": "jest",
-    "bundle": "react-native bundle --platform ios --dev false --entry-file index.js --bundle-output ios/main.jsbundle --assets-dest ios"
+    "build": "react-native bundle --platform ios --entry-file index.js --bundle-output ios/main.jsbundle --assets-dest ios",
+    "test": "jest"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.6.0",
