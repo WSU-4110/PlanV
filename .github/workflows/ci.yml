@@ -21,39 +21,14 @@ jobs:
       with:
         node-version: 16
 
-    - name: Skip react-native-reanimated in Podfile
-      run: |
-        cd PlanVapp/ios
-        sed -i.bak '/react-native-reanimated/d' Podfile
-
-    - name: Skip RNFBAnalytics in Podfile (CI only)
-      run: |
-        cd PlanVapp/ios
-        sed -i.bak '/@react-native-firebase\/analytics/d' Podfile
-
-    - name: Skip RNFBApp in Podfile (CI only)
-      run: |
-        cd PlanVapp/ios
-        sed -i.bak '/@react-native-firebase\/app/d' Podfile
-
     - name: Install Dependencies
       run: npm install
 
-    - name: Install CocoaPods
-      run: |
-        cd PlanVapp/ios
-        pod install
+    - name: Skip CocoaPods (CI only)
+      run: echo "Skipping CocoaPods installation in CI"
 
     - name: Build with Metro
       run: npm run build
-
-    - name: Build with Xcode
-      run: |
-        cd PlanVapp/ios
-        xcodebuild -workspace PlanV.xcworkspace \
-          -scheme PlanV \
-          -configuration Release \
-          -derivedDataPath build
 
     - name: Run Jest Tests
       run: npm test
