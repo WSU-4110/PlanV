@@ -4,7 +4,7 @@ import Weather from '../screens/Weather';
 
 global.fetch = jest.fn();
 
-jest.mock('../../assets/rainy.jpg', () => 'mocked-rainy-image');
+jest.mock('../assets/rainy.jpg', () => 'mocked-rainy-image');
 jest.mock('react-native/Libraries/Image/ImageBackground', () => 'ImageBackground');
 
 describe('Background Image Selection Tests', () => {
