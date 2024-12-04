@@ -1,39 +1,39 @@
 // InitialBooking.js
 
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView} from 'react-native';
 import Header from '../../components/Header';
 import Icon from 'react-native-vector-icons/Feather';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import DatePicker from 'react-native-date-ranges';
 
-const InitialBooking = () => {
-  const [selectedOption, setSelectedOption] = useState('');
-  const [selectedDates, setSelectedDates] = useState(null);
-  const [rooms, setRooms] = useState(1);
-  const [adults, setAdults] = useState(1);
-  const [children, setChildren] = useState(0);
-  const [editable, setEditable] = useState(false);
+  const InitialBooking = ({ route }) => {
+    const [selectedOption, setSelectedOption] = useState('');
+    const [rooms, setRooms] = useState(1);
+    const [adults, setAdults] = useState(1);
+    const [children, setChildren] = useState(0);
+    const [selectedDates, setSelectedDates] = useState(null);
+    const [editable, setEditable] = useState(false);
+  
+    const searchPlaces = (input) => {
+      // Implement your search logic here
+      console.log("Searching for places with input:", input);
+    };
 
-  const handleSelection = (option) => {
-    setSelectedOption(option);
-  };
-
-  const searchPlaces = (input) => {
-    // Implement your search logic here
-    console.log('Searching for:', input);
-  };
-
-  const customButton = (onConfirm) => (
-    <Text style={styles.confirmButton} onPress={onConfirm}>
-      Confirm
-    </Text>
-  );
-
-  return (
+    const handleSelection = (option) => {
+      setSelectedOption(option);
+    };
+  
+    const customButton = (onConfirm) => (
+      <Text style={styles.confirmButton} onPress={onConfirm}>
+        Confirm
+      </Text>
+    );
+  
+    return (
     <ScrollView style={styles.container}>
       <Header handleSelection={handleSelection} />
-
+{/* Flight Filters */}
       <View style={styles.messageContainer}>
         {selectedOption === 'Flight' && (
           <View style={styles.flightContainer}>
@@ -79,7 +79,11 @@ const InitialBooking = () => {
                 mode={"range"}
               />
             </View>
-            <TouchableOpacity
+
+      
+        
+          {/* Rooms, Adults, Children Selectors */}
+          <TouchableOpacity
         onPress={() => setEditable(!editable)} // Toggle edit mode on press
         style={styles.inputContainer}
       >
@@ -129,18 +133,214 @@ const InitialBooking = () => {
       >
         <Text style={styles.searchButtonText}>Search</Text>
       </TouchableOpacity>
+    </View>
+      )}
+      {/* Hotel Filters */}
+      {selectedOption === 'Hotel' && (
+          <View style={styles.flightContainer}>
+            <Text style={styles.messageText}>You selected Hotel</Text>
+            <View style={styles.searchContainer}>
+              <Icon name="search" size={24} color="black" />
+              <TextInput
+                placeholder="Enter Your Destination"
+                placeholderTextColor="black"
+                style={styles.searchInput}
+              />
+            </View>
+
+            {/* Date Picker Section */}
+            <View style={styles.dateContainer}>
+              <Icon name="calendar" size={24} color="black" />
+              <DatePicker
+                style={styles.datePicker}
+                customStyles={{
+                  placeholderText: {
+                    fontSize: 15,
+                    flexDirection: "row",
+                    alignItems: "center",
+                    marginRight: "auto",
+                  },
+                  headerStyle: {
+                    backgroundColor: "#003580",
+                  },
+                  contentText: {
+                    fontSize: 15,
+                    flexDirection: "row",
+                    alignItems: "center",
+                    marginRight: "auto",
+                  },
+                }}
+                selectedBgColor="#0047AB"
+                customButton={customButton}
+                onConfirm={(startDate, endDate) =>
+                  setSelectedDates(startDate, endDate)
+                }
+                allowFontScaling={false}
+                placeholder={"Select Your Dates"}
+                mode={"range"}
+              />
+            </View>
+
+      
+        
+          {/* Rooms, Adults, Children Selectors */}
+          <TouchableOpacity
+        onPress={() => setEditable(!editable)} // Toggle edit mode on press
+        style={styles.inputContainer}
+      >
+        <Ionicons name="person-outline" size={24} color="black" />
+        <TextInput
+          editable={false} // Make input non-editable
+          placeholderTextColor="red"
+          placeholder={` ${rooms} room • ${adults} adults • ${children} children`}
+          style={styles.input}
+        />
+      </TouchableOpacity>
+
+      {/* Show selectors only if editable is true */}
+      {editable && (
+        <View style={styles.selectorsContainer}>
+          {[
+            { label: 'Rooms', count: rooms, setCount: setRooms },
+            { label: 'Adults', count: adults, setCount: setAdults },
+            { label: 'Children', count: children, setCount: setChildren },
+          ].map(({ label, count, setCount }, index) => (
+            <View key={index} style={styles.selector}>
+              <Text style={styles.label}>{label}</Text>
+              <View style={styles.counterContainer}>
+                <TouchableOpacity
+                  onPress={() => setCount(Math.max(0, count - 1))}
+                  style={styles.counterButton}
+                >
+                  <Text style={styles.counterText}>-</Text>
+                </TouchableOpacity>
+                <Text style={styles.countText}>{count}</Text>
+                <TouchableOpacity
+                  onPress={() => setCount(count + 1)}
+                  style={styles.counterButton}
+                >
+                  <Text style={styles.counterText}>+</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          ))}
+        </View>
+      )}
+
+      {/* Search Button */}
+      <TouchableOpacity
+        onPress={() => searchPlaces(route?.params.input)}
+        style={styles.searchButton}
+      >
+        <Text style={styles.searchButtonText}>Search</Text>
+      </TouchableOpacity>
+    </View>
+      )}
+      {/* Car Rental Filters */}
+      {selectedOption === 'Car Rental' && (
+                  <View style={styles.flightContainer}>
+                  <Text style={styles.messageText}>You selected Car Rental</Text>
+                  <View style={styles.searchContainer}>
+                    <Icon name="search" size={24} color="black" />
+                    <TextInput
+                      placeholder="Enter Your Destination"
+                      placeholderTextColor="black"
+                      style={styles.searchInput}
+                    />
+                  </View>
+      
+                  {/* Date Picker Section */}
+                  <View style={styles.dateContainer}>
+                    <Icon name="calendar" size={24} color="black" />
+                    <DatePicker
+                      style={styles.datePicker}
+                      customStyles={{
+                        placeholderText: {
+                          fontSize: 15,
+                          flexDirection: "row",
+                          alignItems: "center",
+                          marginRight: "auto",
+                        },
+                        headerStyle: {
+                          backgroundColor: "#003580",
+                        },
+                        contentText: {
+                          fontSize: 15,
+                          flexDirection: "row",
+                          alignItems: "center",
+                          marginRight: "auto",
+                        },
+                      }}
+                      selectedBgColor="#0047AB"
+                      customButton={customButton}
+                      onConfirm={(startDate, endDate) =>
+                        setSelectedDates(startDate, endDate)
+                      }
+                      allowFontScaling={false}
+                      placeholder={"Select Your Dates"}
+                      mode={"range"}
+                    />
+                  </View>
+      
+            
+              
+                {/* Rooms, Adults, Children Selectors */}
+                <TouchableOpacity
+              onPress={() => setEditable(!editable)} // Toggle edit mode on press
+              style={styles.inputContainer}
+            >
+              <Ionicons name="person-outline" size={24} color="black" />
+              <TextInput
+                editable={false} // Make input non-editable
+                placeholderTextColor="red"
+                placeholder={` ${rooms} room • ${adults} adults • ${children} children`}
+                style={styles.input}
+              />
+            </TouchableOpacity>
+      
+            {/* Show selectors only if editable is true */}
+            {editable && (
+              <View style={styles.selectorsContainer}>
+                {[
+                  { label: 'Rooms', count: rooms, setCount: setRooms },
+                  { label: 'Adults', count: adults, setCount: setAdults },
+                  { label: 'Children', count: children, setCount: setChildren },
+                ].map(({ label, count, setCount }, index) => (
+                  <View key={index} style={styles.selector}>
+                    <Text style={styles.label}>{label}</Text>
+                    <View style={styles.counterContainer}>
+                      <TouchableOpacity
+                        onPress={() => setCount(Math.max(0, count - 1))}
+                        style={styles.counterButton}
+                      >
+                        <Text style={styles.counterText}>-</Text>
+                      </TouchableOpacity>
+                      <Text style={styles.countText}>{count}</Text>
+                      <TouchableOpacity
+                        onPress={() => setCount(count + 1)}
+                        style={styles.counterButton}
+                      >
+                        <Text style={styles.counterText}>+</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                ))}
+              </View>
+            )}
+      
+            {/* Search Button */}
+            <TouchableOpacity
+              onPress={() => searchPlaces(route?.params.input)}
+              style={styles.searchButton}
+            >
+              <Text style={styles.searchButtonText}>Search</Text>
+            </TouchableOpacity>
           </View>
-        )}
-        {selectedOption === 'Hotel' && (
-          <Text style={styles.messageText}>You selected Hotel</Text>
-        )}
-        {selectedOption === 'Car Rental' && (
-          <Text style={styles.messageText}>You selected Car Rental</Text>
-        )}
-        {!selectedOption && (
-          <Text style={styles.messageText}>Please select an option</Text>
-        )}
-      </View>
+            )}
+      {!selectedOption && (
+        <Text style={styles.messageText}>Please select an option</Text>
+      )}
+    </View>
     </ScrollView>
   );
 };
