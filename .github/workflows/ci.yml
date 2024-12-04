@@ -10,21 +10,19 @@ jobs:
   build-and-test:
     runs-on: macos-latest
     steps:
-    - name: Checkout Code
-      uses: actions/checkout@v3
+    - uses: actions/checkout@v3
     - name: Set up Node.js
       uses: actions/setup-node@v3
       with:
-        node-version: 16
+        node-version: 18
     - name: Install Dependencies
       run: |
         cd PlanVapp
         npm install
-        npm install --save-dev @testing-library/react-native
-    - name: Verify Dependencies
+    - name: Build with Metro
       run: |
         cd PlanVapp
-        ls node_modules/@testing-library/react-native || echo "Module not found"
+        npx react-native bundle --entry-file index.js --platform ios --dev false --bundle-output ios/main.jsbundle --assets-dest ios
     - name: Run Tests
       run: |
         cd PlanVapp
