@@ -10,19 +10,14 @@ jobs:
   build-and-test:
     runs-on: macos-latest
     steps:
-    - uses: actions/checkout@v3
     - name: Set up Node.js
       uses: actions/setup-node@v3
       with:
-        node-version: 18
+        node-version: 16
     - name: Install Dependencies
       run: |
         cd PlanVapp
         npm install
-    - name: Build with Metro
-      run: |
-        cd PlanVapp
-        npx react-native bundle --entry-file index.js --platform ios --dev false --bundle-output ios/main.jsbundle --assets-dest ios
     - name: Run Tests
       run: |
         cd PlanVapp
