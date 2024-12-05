@@ -1,450 +1,436 @@
-// InitialBooking.js
-
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView} from 'react-native';
-import Header from '../../components/Header';
-import Icon from 'react-native-vector-icons/Feather';
+import React, { useState, useEffect } from 'react';
+import {
+    View,
+    Text,
+    TextInput,
+    StyleSheet,
+    ScrollView,
+    TouchableOpacity,
+    FlatList,
+} from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import DatePicker from 'react-native-date-ranges';
+import Header from '../../components/Header';
+import { debounce } from 'lodash';
 
-  const InitialBooking = ({ route }) => {
+const InitialBooking = ({ navigation }) => {
     const [selectedOption, setSelectedOption] = useState('');
-    const [rooms, setRooms] = useState(1);
-    const [adults, setAdults] = useState(1);
-    const [children, setChildren] = useState(0);
-    const [selectedDates, setSelectedDates] = useState(null);
+    const [sourceAirportCode, setSourceAirportCode] = useState('BOM');
+    const [destinationAirportCode, setDestinationAirportCode] = useState('DEL');
+    const [date, setDate] = useState('2024-11-25');
+    const [classOfService, setClassOfService] = useState('ECONOMY');
+    const [itineraryType, setItineraryType] = useState('ONE_WAY');
+    const [numAdults, setNumAdults] = useState(1); // Fixed type issue (use numbers instead of strings)
+    const [numSeniors, setNumSeniors] = useState(0);
+    const [numChildren, setNumChildren] = useState(0);
+    const [sortOrder, setSortOrder] = useState('ML_BEST_VALUE');
+    const [error, setError] = useState(null);
     const [editable, setEditable] = useState(false);
-  
-    const searchPlaces = (input) => {
-      // Implement your search logic here
-      console.log("Searching for places with input:", input);
+    const [query, setQuery] = useState('London');
+    const [locationResults, setLocationResults] = useState([]);
+    const [geoId, setGeoId] = useState('');
+    const [checkIn, setCheckIn] = useState('2024-12-01');
+    const [checkOut, setCheckOut] = useState('2024-12-10');
+    const [hotels, setHotels] = useState([]);
+    const [Hotelerror, setHotelError] = useState(null);
+    const [sourceSuggestions, setSourceSuggestions] = useState([]);
+    const [destSuggestions, setDestSuggestions] = useState([]);
+
+    const API_KEY = '';
+
+    const fetchFlightInfo = async () => {
+        try {
+            const response = await fetch(
+                `https://tripadvisor16.p.rapidapi.com/api/v1/flights/searchFlights?sourceAirportCode=${sourceAirportCode}&destinationAirportCode=${destinationAirportCode}&date=${date}&itineraryType=${itineraryType}&sortOrder=${sortOrder}&numAdults=${numAdults}&numSeniors=${numSeniors}&classOfService=${classOfService}&pageNumber=1&nearby=yes&nonstop=yes&currencyCode=USD&region=USA`,
+                {
+                    method: 'GET',
+                    headers: {
+                        'x-rapidapi-host': 'tripadvisor16.p.rapidapi.com',
+                        'x-rapidapi-key': API_KEY,
+                        'Content-Type': 'application/json',
+                    },
+                }
+            );
+
+            const data = await response.json();
+            if (response.ok && data?.data?.flights) {
+                // Ensure navigation works properly with data passed as parameter
+                navigation.navigate('FlightFilters', { flightData: data.data.flights });
+                setError(null);
+            } else {
+                setError('No flights found or API response error.');
+            }
+        } catch (err) {
+            setError('Failed to fetch flight data.');
+        }
     };
 
-    const handleSelection = (option) => {
-      setSelectedOption(option);
+    const fetchAirportSuggestions = async (query, setSuggestions) => {
+        if (!query.trim()) return; // Prevent empty queries from triggering API calls
+        try {
+            const response = await fetch(`https://tripadvisor16.p.rapidapi.com/api/v1/flights/searchAirport?query=${query}`, {
+                method: 'GET',
+                headers: {
+                    'x-rapidapi-host': 'tripadvisor16.p.rapidapi.com',
+                    'x-rapidapi-key': API_KEY,
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            const data = await response.json();
+            if (response.ok && data?.data) {
+                setSuggestions(data.data);
+            } else {
+                setSuggestions([]);
+            }
+        } catch (err) {
+            console.error('Failed to fetch airport suggestions:', err);
+            setSuggestions([]);
+        }
     };
-  
-    const customButton = (onConfirm) => (
-      <Text style={styles.confirmButton} onPress={onConfirm}>
-        Confirm
-      </Text>
-    );
-  
-    return (
-    <ScrollView style={styles.container}>
-      <Header handleSelection={handleSelection} />
-{/* Flight Filters */}
-      <View style={styles.messageContainer}>
-        {selectedOption === 'Flight' && (
-          <View style={styles.flightContainer}>
-            <Text style={styles.messageText}>You selected Flight</Text>
-            <View style={styles.searchContainer}>
-              <Icon name="search" size={24} color="black" />
-              <TextInput
-                placeholder="Enter Your Destination"
-                placeholderTextColor="black"
-                style={styles.searchInput}
-              />
-            </View>
 
-            {/* Date Picker Section */}
-            <View style={styles.dateContainer}>
-              <Icon name="calendar" size={24} color="black" />
-              <DatePicker
-                style={styles.datePicker}
-                customStyles={{
-                  placeholderText: {
-                    fontSize: 15,
-                    flexDirection: "row",
-                    alignItems: "center",
-                    marginRight: "auto",
-                  },
-                  headerStyle: {
-                    backgroundColor: "#003580",
-                  },
-                  contentText: {
-                    fontSize: 15,
-                    flexDirection: "row",
-                    alignItems: "center",
-                    marginRight: "auto",
-                  },
-                }}
-                selectedBgColor="#0047AB"
-                customButton={customButton}
-                onConfirm={(startDate, endDate) =>
-                  setSelectedDates(startDate, endDate)
-                }
-                allowFontScaling={false}
-                placeholder={"Select Your Dates"}
-                mode={"range"}
-              />
-            </View>
+    const debouncedSourceFetch = debounce((query) => fetchAirportSuggestions(query, setSourceSuggestions), 500);
+    const debouncedDestFetch = debounce((query) => fetchAirportSuggestions(query, setDestSuggestions), 500);
 
-      
-        
-          {/* Rooms, Adults, Children Selectors */}
-          <TouchableOpacity
-        onPress={() => setEditable(!editable)} // Toggle edit mode on press
-        style={styles.inputContainer}
-      >
-        <Ionicons name="person-outline" size={24} color="black" />
-        <TextInput
-          editable={false} // Make input non-editable
-          placeholderTextColor="red"
-          placeholder={` ${rooms} room • ${adults} adults • ${children} children`}
-          style={styles.input}
-        />
-      </TouchableOpacity>
+    const fetchLocation = async () => {
+      try {
+          const response = await fetch(`https://tripadvisor16.p.rapidapi.com/api/v1/hotels/searchLocation?query=${query}`, {
+              method: 'GET',
+              headers: {
+                  'x-rapidapi-host': 'tripadvisor16.p.rapidapi.com',
+                  'x-rapidapi-key': API_KEY,
+                  'Content-Type': 'application/json',
+              },
+          });
 
-      {/* Show selectors only if editable is true */}
-      {editable && (
-        <View style={styles.selectorsContainer}>
-          {[
-            { label: 'Rooms', count: rooms, setCount: setRooms },
-            { label: 'Adults', count: adults, setCount: setAdults },
-            { label: 'Children', count: children, setCount: setChildren },
-          ].map(({ label, count, setCount }, index) => (
-            <View key={index} style={styles.selector}>
-              <Text style={styles.label}>{label}</Text>
-              <View style={styles.counterContainer}>
-                <TouchableOpacity
-                  onPress={() => setCount(Math.max(0, count - 1))}
-                  style={styles.counterButton}
-                >
-                  <Text style={styles.counterText}>-</Text>
-                </TouchableOpacity>
-                <Text style={styles.countText}>{count}</Text>
-                <TouchableOpacity
-                  onPress={() => setCount(count + 1)}
-                  style={styles.counterButton}
-                >
-                  <Text style={styles.counterText}>+</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          ))}
-        </View>
-      )}
+          const data = await response.json();
+          if (response.ok && data?.data?.length > 0) {
+              setLocationResults(data.data);
+              setHotelError(null);
+          } else {
+              setHotelError('No locations found.');
+              setLocationResults([]);
+              setHotels([]);
+          }
+      } catch (err) {
+          setHotelError('Failed to fetch location data.');
+          setLocationResults([]);
+          setHotels([]);
+      }
+  };
 
-      {/* Search Button */}
-      <TouchableOpacity
-        onPress={() => searchPlaces(route?.params.input)}
-        style={styles.searchButton}
-      >
-        <Text style={styles.searchButtonText}>Search</Text>
-      </TouchableOpacity>
-    </View>
-      )}
-      {/* Hotel Filters */}
-      {selectedOption === 'Hotel' && (
-          <View style={styles.flightContainer}>
-            <Text style={styles.messageText}>You selected Hotel</Text>
-            <View style={styles.searchContainer}>
-              <Icon name="search" size={24} color="black" />
-              <TextInput
-                placeholder="Enter Your Destination"
-                placeholderTextColor="black"
-                style={styles.searchInput}
-              />
-            </View>
+  const fetchHotel = async () => {
+      try {
+          const response = await fetch(`https://tripadvisor16.p.rapidapi.com/api/v1/hotels/searchHotels?geoId=${geoId}&checkIn=${checkIn}&checkOut=${checkOut}&pageNumber=1&currencyCode=USD`, {
+              method: 'GET',
+              headers: {
+                  'x-rapidapi-host': 'tripadvisor16.p.rapidapi.com',
+                  'x-rapidapi-key': API_KEY,
+                  'Content-Type': 'application/json',
+              },
+          });
 
-            {/* Date Picker Section */}
-            <View style={styles.dateContainer}>
-              <Icon name="calendar" size={24} color="black" />
-              <DatePicker
-                style={styles.datePicker}
-                customStyles={{
-                  placeholderText: {
-                    fontSize: 15,
-                    flexDirection: "row",
-                    alignItems: "center",
-                    marginRight: "auto",
-                  },
-                  headerStyle: {
-                    backgroundColor: "#003580",
-                  },
-                  contentText: {
-                    fontSize: 15,
-                    flexDirection: "row",
-                    alignItems: "center",
-                    marginRight: "auto",
-                  },
-                }}
-                selectedBgColor="#0047AB"
-                customButton={customButton}
-                onConfirm={(startDate, endDate) =>
-                  setSelectedDates(startDate, endDate)
-                }
-                allowFontScaling={false}
-                placeholder={"Select Your Dates"}
-                mode={"range"}
-              />
-            </View>
+          const data = await response.json();
+          if (response.ok && data?.data?.data?.length > 0) {
+              setHotels(data.data.data);
+              setHotelError(null);
+          } else {
+              setHotelError('No hotels found for the selected location.');
+              setHotels([]);
+          }
+      } catch (err) {
+          setHotelError('Failed to fetch hotel data.');
+          setHotels([]);
+      }
+  };
 
-      
-        
-          {/* Rooms, Adults, Children Selectors */}
-          <TouchableOpacity
-        onPress={() => setEditable(!editable)} // Toggle edit mode on press
-        style={styles.inputContainer}
-      >
-        <Ionicons name="person-outline" size={24} color="black" />
-        <TextInput
-          editable={false} // Make input non-editable
-          placeholderTextColor="red"
-          placeholder={` ${rooms} room • ${adults} adults • ${children} children`}
-          style={styles.input}
-        />
-      </TouchableOpacity>
+  useEffect(() => {
+      fetchLocation();
+  }, [query]);
 
-      {/* Show selectors only if editable is true */}
-      {editable && (
-        <View style={styles.selectorsContainer}>
-          {[
-            { label: 'Rooms', count: rooms, setCount: setRooms },
-            { label: 'Adults', count: adults, setCount: setAdults },
-            { label: 'Children', count: children, setCount: setChildren },
-          ].map(({ label, count, setCount }, index) => (
-            <View key={index} style={styles.selector}>
-              <Text style={styles.label}>{label}</Text>
-              <View style={styles.counterContainer}>
-                <TouchableOpacity
-                  onPress={() => setCount(Math.max(0, count - 1))}
-                  style={styles.counterButton}
-                >
-                  <Text style={styles.counterText}>-</Text>
-                </TouchableOpacity>
-                <Text style={styles.countText}>{count}</Text>
-                <TouchableOpacity
-                  onPress={() => setCount(count + 1)}
-                  style={styles.counterButton}
-                >
-                  <Text style={styles.counterText}>+</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          ))}
-        </View>
-      )}
+  useEffect(() => {
+      if (geoId) {
+          fetchHotel();
+      }
+  }, [geoId]);
 
-      {/* Search Button */}
-      <TouchableOpacity
-        onPress={() => searchPlaces(route?.params.input)}
-        style={styles.searchButton}
-      >
-        <Text style={styles.searchButtonText}>Search</Text>
-      </TouchableOpacity>
-    </View>
-      )}
-      {/* Car Rental Filters */}
-      {selectedOption === 'Car Rental' && (
-                  <View style={styles.flightContainer}>
-                  <Text style={styles.messageText}>You selected Car Rental</Text>
-                  <View style={styles.searchContainer}>
-                    <Icon name="search" size={24} color="black" />
-                    <TextInput
-                      placeholder="Enter Your Destination"
-                      placeholderTextColor="black"
-                      style={styles.searchInput}
-                    />
-                  </View>
-      
-                  {/* Date Picker Section */}
-                  <View style={styles.dateContainer}>
-                    <Icon name="calendar" size={24} color="black" />
-                    <DatePicker
-                      style={styles.datePicker}
-                      customStyles={{
-                        placeholderText: {
-                          fontSize: 15,
-                          flexDirection: "row",
-                          alignItems: "center",
-                          marginRight: "auto",
-                        },
-                        headerStyle: {
-                          backgroundColor: "#003580",
-                        },
-                        contentText: {
-                          fontSize: 15,
-                          flexDirection: "row",
-                          alignItems: "center",
-                          marginRight: "auto",
-                        },
-                      }}
-                      selectedBgColor="#0047AB"
-                      customButton={customButton}
-                      onConfirm={(startDate, endDate) =>
-                        setSelectedDates(startDate, endDate)
-                      }
-                      allowFontScaling={false}
-                      placeholder={"Select Your Dates"}
-                      mode={"range"}
-                    />
-                  </View>
-      
-            
-              
-                {/* Rooms, Adults, Children Selectors */}
-                <TouchableOpacity
-              onPress={() => setEditable(!editable)} // Toggle edit mode on press
-              style={styles.inputContainer}
-            >
-              <Ionicons name="person-outline" size={24} color="black" />
-              <TextInput
-                editable={false} // Make input non-editable
-                placeholderTextColor="red"
-                placeholder={` ${rooms} room • ${adults} adults • ${children} children`}
-                style={styles.input}
-              />
-            </TouchableOpacity>
-      
-            {/* Show selectors only if editable is true */}
-            {editable && (
-              <View style={styles.selectorsContainer}>
-                {[
-                  { label: 'Rooms', count: rooms, setCount: setRooms },
-                  { label: 'Adults', count: adults, setCount: setAdults },
-                  { label: 'Children', count: children, setCount: setChildren },
-                ].map(({ label, count, setCount }, index) => (
-                  <View key={index} style={styles.selector}>
-                    <Text style={styles.label}>{label}</Text>
-                    <View style={styles.counterContainer}>
-                      <TouchableOpacity
-                        onPress={() => setCount(Math.max(0, count - 1))}
-                        style={styles.counterButton}
-                      >
-                        <Text style={styles.counterText}>-</Text>
-                      </TouchableOpacity>
-                      <Text style={styles.countText}>{count}</Text>
-                      <TouchableOpacity
-                        onPress={() => setCount(count + 1)}
-                        style={styles.counterButton}
-                      >
-                        <Text style={styles.counterText}>+</Text>
-                      </TouchableOpacity>
-                    </View>
-                  </View>
-                ))}
-              </View>
-            )}
-      
-            {/* Search Button */}
-            <TouchableOpacity
-              onPress={() => searchPlaces(route?.params.input)}
-              style={styles.searchButton}
-            >
-              <Text style={styles.searchButtonText}>Search</Text>
-            </TouchableOpacity>
-          </View>
-            )}
-      {!selectedOption && (
-        <Text style={styles.messageText}>Please select an option</Text>
-      )}
-    </View>
-    </ScrollView>
-  );
+  const handleSearch = () => {
+      if (geoId) {
+          fetchHotel();
+      }
+  };
+
+  const navigateToResults = () => {
+    // Navigate to SearchResults screen with hotels data as params
+    navigation.navigate('HotelFilters', { hotels });
 };
 
+
+    const handleSelection = (option) => {
+        setSelectedOption(option);
+    };
+
+
+    return (
+      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+          <Header handleSelection={handleSelection} />
+          <View style={styles.messageContainer}>
+              {selectedOption === 'Flight' && (
+                  <>
+                      <Text style={styles.title}>Flight Search</Text>
+                      <TextInput
+                          style={styles.input}
+                          placeholder="Source Airport"
+                          value={sourceAirportCode}
+                          onChangeText={(text) => {
+                            setSourceAirportCode(text);
+                            debouncedSourceFetch(text); // Use debounced fetch
+                        }}
+                      />
+<FlatList
+    data={sourceSuggestions}
+    keyExtractor={(item) => item.code}
+    renderItem={({ item }) => (
+        <TouchableOpacity
+            style={styles.locationItem}
+            onPress={() => {
+                setSourceAirportCode(item.code); // Update the input with the full name and code
+                setSourceSuggestions([]); // Close the suggestions list
+            }}
+        >
+            <Text>{item.name} ({item.code})</Text>
+        </TouchableOpacity>
+    )}
+/>
+                        
+                      <TextInput
+                      data={sourceSuggestions}
+                          style={styles.input}
+                          placeholder="Destination Airport"
+                          value={destinationAirportCode}
+                          onChangeText={(text) => {
+                            setDestinationAirportCode(text);
+                            debouncedDestFetch(text); // Use debounced fetch
+                        }}
+                        />
+<FlatList
+                data={destSuggestions}
+                keyExtractor={(item) => item.code}
+                renderItem={({ item }) => (
+                    <TouchableOpacity
+                        style={styles.locationItem}
+                    onPress={() => {
+                        setDestinationAirportCode(item.code); // Update the input with the full name and code
+                        setDestSuggestions([]); // Close the suggestions list
+                    }}
+                    >
+                        <Text>{item.name} ({item.code})</Text>
+                    </TouchableOpacity>
+                )}
+            />
+
+                      <TextInput
+                          style={styles.input}
+                          placeholder="Date (YYYY-MM-DD)"
+                          value={date}
+                          onChangeText={setDate}
+                      />
+                      <TouchableOpacity
+                          onPress={() => setEditable(!editable)}
+                          style={styles.input}
+                      >
+                          <Ionicons name="person-outline" size={24} color="black" />
+                          <TextInput
+                              editable={false}
+                              placeholderTextColor="red"
+                              placeholder={` ${numSeniors} seniors • ${numAdults} adults • ${numChildren} children`}
+                              style={styles.inputOne}
+                          />
+                      </TouchableOpacity>
+  
+                      {/* Show selectors only if editable is true */}
+                      {editable && (
+                          <ScrollView style={styles.selectorsContainer}>
+                              {[
+                                  { label: 'Adults', count: numAdults, setCount: setNumAdults },
+                                  { label: 'Seniors', count: numSeniors, setCount: setNumSeniors },
+                                  { label: 'Children', count: numChildren, setCount: setNumChildren },
+                              ].map(({ label, count, setCount }, index) => (
+                                  <View key={index} style={styles.selector}>
+                                      <Text style={styles.label}>{label}</Text>
+                                      <View style={styles.counterContainer}>
+                                          <TouchableOpacity
+                                              onPress={() => setCount(Math.max(0, count - 1))}
+                                              style={styles.counterButton}
+                                          >
+                                              <Text style={styles.counterText}>-</Text>
+                                          </TouchableOpacity>
+                                          <Text style={styles.countText}>{count}</Text>
+                                          <TouchableOpacity
+                                              onPress={() => setCount(count + 1)}
+                                              style={styles.counterButton}
+                                          >
+                                              <Text style={styles.counterText}>+</Text>
+                                          </TouchableOpacity>
+                                      </View>
+                                  </View>
+                              ))}
+                          </ScrollView>
+                      )}
+                      <TouchableOpacity style={styles.button} onPress={fetchFlightInfo}>
+                          <Text style={styles.buttonText}>Search Flights</Text>
+                      </TouchableOpacity>
+                  </>
+              )}
+              {error && <Text style={styles.error}>{error}</Text>}
+              {!selectedOption && <Text style={styles.messageText}>Please select an option</Text>}
+              {selectedOption === 'Hotel' && (
+                  <>
+                      <Text style={styles.Hoteltitle}>Hotel Search</Text>
+  
+                      <TextInput
+                          style={styles.Hotelinput}
+                          placeholder="Search for hotels in..."
+                          value={query}
+                          onChangeText={(text) => setQuery(text)}
+                          placeholderTextColor="#888"
+                      />
+  
+                      {locationResults.length > 0 && (
+                          <FlatList
+                              data={locationResults}
+                              keyExtractor={(item) => item.geoId.toString()}
+                              renderItem={({ item }) => (
+                                  <TouchableOpacity
+                                      style={styles.HotellocationItem}
+                                      onPress={() => {
+                                          setGeoId(item.geoId);
+                                          setQuery(item.title.replace(/<[^>]+>/g, ''));
+                                          setLocationResults([]);
+                                      }}
+                                  >
+                                      <Text>{item.title.replace(/<[^>]+>/g, '')} - {item.secondaryText}</Text>
+                                  </TouchableOpacity>
+                              )}
+                          />
+                      )}
+  
+                      <TextInput
+                          style={styles.Hotelinput}
+                          placeholder="Check-in Date"
+                          value={checkIn}
+                          onChangeText={(text) => setCheckIn(text)}
+                          placeholderTextColor="#888"
+                      />
+                      <TextInput
+                          style={styles.Hotelinput}
+                          placeholder="Check-out Date"
+                          value={checkOut}
+                          onChangeText={(text) => setCheckOut(text)}
+                          placeholderTextColor="#888"
+                      />
+  
+                      <TouchableOpacity style={styles.Hotelbutton} onPress={handleSearch}>
+                          <Text style={styles.HotelbuttonText}>Search</Text>
+                      </TouchableOpacity>
+  
+                      {hotels.length > 0 && (
+                          <TouchableOpacity style={styles.Hotelbutton} onPress={navigateToResults}>
+                              <Text style={styles.HotelbuttonText}>Go to Results</Text>
+                          </TouchableOpacity>
+                      )}
+  
+                      {Hotelerror && <Text style={styles.error}>{Hotelerror}</Text>}
+                  </>
+              )}
+  
+              {selectedOption === 'Cars' && (
+                  <Text style={styles.messageText}>You selected Car Rental</Text>
+              )}
+          </View>
+      </ScrollView>
+  );
+};
+  
+
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    paddingTop: 50,
+    container: { flex: 1, backgroundColor: '#fff' },
+    title: { fontSize: 24, fontWeight: 'bold', marginBottom: 20 },
+    input: {
+        height: 50,
+        borderColor: '#ccc',
+        borderWidth: 1,
+        borderRadius: 5,
+        paddingLeft: 10,
+        marginBottom: 10,
+    },
+    button: {
+        backgroundColor: '#007bff',
+        padding: 15,
+        borderRadius: 5,
+        alignItems: 'center',
+    },
+    buttonText: { color: '#fff', fontSize: 18 },
+    error: { color: 'red', marginVertical: 10 },
+    messageContainer: {
+        margin: 20,
+        borderColor: '#FFC72C',
+        borderWidth: 3,
+        borderRadius: 6,
+        padding: 15,
+    },
+    selectorsContainer: { marginVertical: 20 },
+    inputOne: { flex: 1 },
+    selector: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        marginVertical: 10,
+    },
+    label: { fontSize: 16, fontWeight: '500' },
+    counterContainer: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+    counterButton: {
+        width: 26,
+        height: 26,
+        borderRadius: 13,
+        borderColor: '#BEBEBE',
+        backgroundColor: '#E0E0E0',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    counterText: { fontSize: 20, fontWeight: '600' },
+    countText: { fontSize: 18, fontWeight: '500', paddingHorizontal: 6 },
+    Hoteltitle: {
+      fontSize: 24,
+      fontWeight: 'bold',
+      marginBottom: 20,
   },
-  messageContainer: {
-    margin: 20,
-    borderColor: '#FFC72C',
-    borderWidth: 3,
-    borderRadius: 6,
-    padding: 15,
+  Hotelinput: {
+      height: 40,
+      borderColor: '#ccc',
+      borderWidth: 1,
+      marginBottom: 10,
+      paddingLeft: 10,
+      fontSize: 16,
   },
-  messageText: {
-    fontSize: 18,
-    color: '#333',
-    textAlign: 'center',
+  Hotelbutton: {
+      backgroundColor: '#007bff',
+      padding: 10,
+      alignItems: 'center',
+      marginTop: 20,
   },
-  flightContainer: {
-    alignItems: 'center',
+  HotelbuttonText: {
+      color: '#fff',
+      fontSize: 18,
   },
-  searchContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderColor: '#FFC72C',
-    borderWidth: 2,
-    borderRadius: 6,
-    padding: 10,
-    marginTop: 10,
+  HotellocationItem: {
+      padding: 10,
+      borderBottomColor: '#ccc',
+      borderBottomWidth: 1,
   },
-  dateContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderColor: '#FFC72C',
-    borderWidth: 2,
-    borderRadius: 6,
-    padding: 10,
-    marginTop: 10,
-    width: '100%',       // Ensures container fills available space
-  },
-  searchInput: {
-    marginLeft: 10,
-    fontSize: 16,
-    color: 'black',
-    flex: 1,
-  },
-  datePicker: {
-    flex: 1,              // Ensures picker takes available space
-    flexShrink: 1,        // Prevents overflow
-    marginLeft: 10,       // Space between icon and picker
-  },
-  confirmButton: {
-    color: '#0047AB',
-    fontSize: 16,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    padding: 10,
-  },
-  inputContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 10,
-    paddingHorizontal: 10,
-    borderColor: "#FFC72C",
-    borderWidth: 2,
-    paddingVertical: 15,
-  },
-  input: { flex: 1 },
-  selectorsContainer: { marginVertical: 20 },
-  selector: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    marginVertical: 10,
-  },
-  label: { fontSize: 16, fontWeight: "500" },
-  counterContainer: { flexDirection: "row", alignItems: "center", gap: 10 },
-  counterButton: {
-    width: 26,
-    height: 26,
-    borderRadius: 13,
-    borderColor: "#BEBEBE",
-    backgroundColor: "#E0E0E0",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  counterText: { fontSize: 20, fontWeight: "600" },
-  countText: { fontSize: 18, fontWeight: "500", paddingHorizontal: 6 },
-  searchButton: {
-    paddingHorizontal: 10,
-    borderColor: "#FFC72C",
-    borderWidth: 2,
-    paddingVertical: 15,
-    backgroundColor: "#2a52be",
-  },
-  searchButtonText: {
-    textAlign: "center",
-    fontSize: 15,
-    fontWeight: "500",
-    color: "white",
+  Hotelerror: {
+      color: 'red',
+      textAlign: 'center',
+      marginTop: 20,
   },
 });
 
