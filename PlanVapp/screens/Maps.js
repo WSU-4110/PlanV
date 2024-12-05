@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import MapView, { Marker, Polyline } from 'react-native-maps';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import MapViewDirections from 'react-native-maps-directions';
-import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Text, Image } from 'react-native';
 import 'react-native-get-random-values';
 
 const Maps = () => {
@@ -12,6 +12,8 @@ const Maps = () => {
     const [drivingTime, setDrivingTime] = useState(null);
     const [planeTime, setPlaneTime] = useState(null);
     const [currentLocation, setCurrentLocation] = useState(null);
+    const [firstField, setFirstField] = useState(""); // First field for current location
+    const [secondField, setSecondField] = useState(""); // Second field for coordinates of the selected image
     const mapRef = useRef(null);
     const GOOGLE_MAPS_APIKEY = 'AIzaSyCRz4XXO5F1RvKuDZbMeo9L7CjFPj_RJKc'; 
 
@@ -36,6 +38,27 @@ const Maps = () => {
             { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
         );
     }, []);
+
+    const handleImagePress = (imageLatitude, imageLongitude) => {
+        // Set first field (current location)
+        setFirstField(`Current Location: ${currentLocation.latitude}, ${currentLocation.longitude}`);
+
+        // Set second field (coordinates of the selected image)
+        setSecondField(`Selected Location: ${imageLatitude}, ${imageLongitude}`);
+
+        // Update destination with the selected image coordinates
+        setDestination({ latitude: imageLatitude, longitude: imageLongitude });
+
+        // Move map to the selected location
+        mapRef.current.animateToRegion({
+            latitude: imageLatitude,
+            longitude: imageLongitude,
+            latitudeDelta: 0.05,
+            longitudeDelta: 0.05,
+        }, 1000);
+        
+        getTravelTimes({ latitude: imageLatitude, longitude: imageLongitude });
+    };
 
     const handleDestinationSelect = (data, details = null) => {
         if (details && details.geometry && details.geometry.location) {
@@ -179,7 +202,6 @@ const Maps = () => {
                 }}
             />
 
-
             <GooglePlacesAutocomplete
                 placeholder="Enter destination"
                 fetchDetails={true}
@@ -226,48 +248,80 @@ const Maps = () => {
                     <Text style={styles.buttonText}>Get Directions</Text>
                 </TouchableOpacity>
             )}
+
+            {/* Images on Homepage */}
+            <TouchableOpacity onPress={() => handleImagePress(37.78825, -122.4324)}>
+                <Image source={require('./path/to/image1.jpg')} style={styles.image} />
+            </TouchableOpacity>
+
+            <TouchableOpacity onPress={() => handleImagePress(34.0522, -118.2437)}>
+                <Image source={require('./path/to/image2.jpg')} style={styles.image} />
+            </TouchableOpacity>
+
+            {/* Display Fields */}
+            <View style={styles.fieldsContainer}>
+                <Text style={styles.fieldText}>{firstField}</Text>
+                <Text style={styles.fieldText}>{secondField}</Text>
+            </View>
         </View>
     );
 };
 
 const styles = StyleSheet.create({
-    container: { flex: 1, position: 'relative' },
+    container: {
+        flex: 1,
+    },
     textInput: {
-        borderColor: '#888',
-        borderWidth: 1,
-        borderRadius: 5,
-        padding: 10,
-        backgroundColor: 'white',
-    },
-    directionsButton: {
-        position: 'absolute',
-        bottom: 70,
-        left: 20,
-        right: 20,
-        backgroundColor: 'linear-gradient(to right, #FF6347, #FF4500)',
-        padding: 15,
-        borderRadius: 30,
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    buttonText: {
-        color: 'white',
-        fontSize: 18,
-        fontWeight: 'bold',
+        height: 40,
+        backgroundColor: '#fff',
+        borderRadius: 20,
+        paddingLeft: 10,
+        marginBottom: 10,
     },
     travelTimeContainer: {
         position: 'absolute',
-        bottom: 120,
-        left: 20,
-        right: 20,
-        backgroundColor: 'white',
+        bottom: 20,
+        left: 10,
+        right: 10,
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
         padding: 10,
         borderRadius: 10,
-        alignItems: 'center',
     },
     travelTimeText: {
+        color: 'white',
         fontSize: 16,
-        fontWeight: 'bold',
+    },
+    directionsButton: {
+        position: 'absolute',
+        bottom: 80,
+        left: 10,
+        right: 10,
+        backgroundColor: 'blue',
+        padding: 15,
+        borderRadius: 10,
+    },
+    buttonText: {
+        color: 'white',
+        fontSize: 16,
+        textAlign: 'center',
+    },
+    image: {
+        width: 100,
+        height: 100,
+        marginTop: 20,
+        marginLeft: 10,
+        marginBottom: 10,
+    },
+    fieldsContainer: {
+        position: 'absolute',
+        top: 150,
+        left: 10,
+        right: 10,
+    },
+    fieldText: {
+        color: 'white',
+        fontSize: 16,
+        marginBottom: 5,
     },
 });
 
