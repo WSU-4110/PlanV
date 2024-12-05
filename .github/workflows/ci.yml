@@ -16,7 +16,7 @@ jobs:
       run: |
         cd PlanVapp
         npm install
-        npm install @react-native-async-storage/async-storage react-native-credit-card
+        npm install @react-native-async-storage/async-storage react-native-credit-card @react-native-community/geolocation react-native-maps react-native-google-places-autocomplete
     - name: Build with Metro
       run: |
         cd PlanVapp
