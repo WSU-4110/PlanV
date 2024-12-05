@@ -2,59 +2,65 @@ import React, { useState } from 'react';
 import { 
   View, 
   Text, 
-  TextInput, 
-  TouchableOpacity, 
-  StyleSheet, 
-  SafeAreaView 
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  SafeAreaView
 } from 'react-native';
 
-const AddDocumentScreen = ({ navigation }) => {
+const AddDocumentScreen = ({ navigation, route }) => {
+  const { addDocument } = route.params;  // This function will be passed from DocumentsScreen
   const [documentType, setDocumentType] = useState('');
-  const [title, setTitle] = useState('');
-  const [date, setDate] = useState('');
-  const [additionalInfo, setAdditionalInfo] = useState('');
-
-  
+  const [documentTitle, setDocumentTitle] = useState('');
+  const [documentDate, setDocumentDate] = useState('');
+  const [documentDetails, setDocumentDetails] = useState('');
+  const [imageUri, setImageUri] = useState(null);
 
   const handleSaveDocument = () => {
-    // Logic to save the document (e.g., send to backend or update local state)
-    alert('Document added successfully!');
-    navigation.goBack(); // Return to the Documents screen
+    const newDocument = {
+      id: (Math.random() * 10000).toString(),
+      type: documentType,
+      title: documentTitle,
+      date: documentDate,
+      imageUri: imageUri,
+    };
+    addDocument(newDocument);
+    navigation.goBack();
   };
 
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={styles.headerTitle}>Add Document</Text>
-      
+      <Text style={styles.title}>Add New Document</Text>
+
       <TextInput
         style={styles.input}
-        placeholder="Document Type (e.g., Flight, Hotel, Activity)"
+        placeholder="Document Type (e.g., Flight, Hotel)"
         value={documentType}
         onChangeText={setDocumentType}
       />
 
       <TextInput
         style={styles.input}
-        placeholder="Title (e.g., Miami Boat Tour)"
-        value={title}
-        onChangeText={setTitle}
+        placeholder="Document Title"
+        value={documentTitle}
+        onChangeText={setDocumentTitle}
       />
 
       <TextInput
         style={styles.input}
-        placeholder="Date (e.g., Dec 15, 2024)"
-        value={date}
-        onChangeText={setDate}
+        placeholder="Date"
+        value={documentDate}
+        onChangeText={setDocumentDate}
       />
 
       <TextInput
         style={styles.input}
-        placeholder="Additional Info (optional)"
-        value={additionalInfo}
-        onChangeText={setAdditionalInfo}
+        placeholder="Details (e.g., Flight number)"
+        value={documentDetails}
+        onChangeText={setDocumentDetails}
       />
 
-      <TouchableOpacity 
+      <TouchableOpacity
         style={styles.saveButton}
         onPress={handleSaveDocument}
       >
@@ -67,34 +73,31 @@ const AddDocumentScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#d0eefe',
     padding: 20,
   },
-  headerTitle: {
-    fontSize: 28,
+  title: {
+    fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 20,
-    textAlign: 'center',
-    color: '#888',
   },
   input: {
-    backgroundColor: 'white',
-    padding: 15,
-    borderRadius: 10,
-    marginBottom: 15,
-    borderColor: '#ddd',
+    height: 45,
+    borderColor: '#ccc',
     borderWidth: 1,
+    borderRadius: 10,
+    paddingLeft: 15,
+    marginBottom: 15,
   },
   saveButton: {
     backgroundColor: '#4A90E2',
-    paddingVertical: 15,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
     borderRadius: 10,
     alignItems: 'center',
   },
   saveButtonText: {
     color: 'white',
     fontWeight: 'bold',
-    fontSize: 16,
   },
 });
 

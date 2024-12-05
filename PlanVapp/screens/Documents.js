@@ -9,7 +9,7 @@ import {
   Modal,
   SafeAreaView
 } from 'react-native';
-import { auth } from '../firebaseConfig'; 
+import { auth } from '../firebaseConfig';
 
 export const DocumentsScreen = ({ navigation }) => {
   const [documents, setDocuments] = useState([
@@ -20,7 +20,7 @@ export const DocumentsScreen = ({ navigation }) => {
       date: 'Dec 15, 2024',
       airline: 'Delta Airlines',
       flightNumber: 'DL1234',
-      imageUri: null 
+      imageUri: null
     },
     {
       id: '2',
@@ -28,7 +28,7 @@ export const DocumentsScreen = ({ navigation }) => {
       title: 'Universal Studios Resort',
       date: 'Dec 20-24, 2024',
       confirmationNumber: 'HTL5678',
-      imageUri: null 
+      imageUri: null
     },
     {
       id: '3',
@@ -36,20 +36,23 @@ export const DocumentsScreen = ({ navigation }) => {
       title: 'Rainforest Trail Excursion',
       date: 'Dec 22, 2024',
       time: '2:00 PM',
-      imageUri: null 
+      imageUri: null
     }
   ]);
 
   const [selectedDocument, setSelectedDocument] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
 
-  const handleAddDocument = () => {
-    // Navigate to document upload screen or open camera
-    navigation.navigate('AddDocuments');
+  const handleAddDocument = (newDocument) => {
+    setDocuments(prevDocuments => [...prevDocuments, newDocument]);
+  };
+
+  const handleDeleteDocument = (id) => {
+    setDocuments(prevDocuments => prevDocuments.filter(item => item.id !== id));
   };
 
   const renderDocumentItem = ({ item }) => (
-    <TouchableOpacity 
+    <TouchableOpacity
       style={styles.documentItem}
       onPress={() => {
         setSelectedDocument(item);
@@ -57,15 +60,15 @@ export const DocumentsScreen = ({ navigation }) => {
       }}
     >
       {item.imageUri ? (
-        <Image 
-          source={{ uri: item.imageUri }} 
-          style={styles.documentImage} 
+        <Image
+          source={{ uri: item.imageUri }}
+          style={styles.documentImage}
         />
       ) : (
         <View style={styles.documentPlaceholder}>
           <Text style={styles.documentTypeIcon}>
-            {item.type === 'Flight' ? '✈️' : 
-             item.type === 'Hotel' ? '🏨' : 
+            {item.type === 'Flight' ? '✈️' :
+             item.type === 'Hotel' ? '🏨' :
              item.type === 'Activity' ? '🎫' : '📄'}
           </Text>
         </View>
@@ -75,6 +78,12 @@ export const DocumentsScreen = ({ navigation }) => {
         <Text style={styles.documentSubtitle}>{item.date}</Text>
         <Text style={styles.documentType}>{item.type}</Text>
       </View>
+      <TouchableOpacity
+        style={styles.deleteButton}
+        onPress={() => handleDeleteDocument(item.id)}
+      >
+        <Text style={styles.deleteButtonText}>Delete</Text>
+      </TouchableOpacity>
     </TouchableOpacity>
   );
 
@@ -91,27 +100,27 @@ export const DocumentsScreen = ({ navigation }) => {
             <>
               <Text style={styles.modalTitle}>{selectedDocument.title}</Text>
               <Text style={styles.modalSubtitle}>{selectedDocument.type} Details</Text>
-              
+
               {selectedDocument.type === 'Flight' && (
                 <View style={styles.detailSection}>
                   <Text>Airline: {selectedDocument.airline}</Text>
                   <Text>Flight Number: {selectedDocument.flightNumber}</Text>
                 </View>
               )}
-              
+
               {selectedDocument.type === 'Hotel' && (
                 <View style={styles.detailSection}>
                   <Text>Confirmation Number: {selectedDocument.confirmationNumber}</Text>
                 </View>
               )}
-              
+
               {selectedDocument.type === 'Activity' && (
                 <View style={styles.detailSection}>
                   <Text>Time: {selectedDocument.time}</Text>
                 </View>
               )}
-              
-              <TouchableOpacity 
+
+              <TouchableOpacity
                 style={styles.closeModalButton}
                 onPress={() => setIsModalVisible(false)}
               >
@@ -127,14 +136,13 @@ export const DocumentsScreen = ({ navigation }) => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.headerContainer}>
-        <TouchableOpacity 
+        <TouchableOpacity
           style={styles.addButton}
-          onPress={handleAddDocument}
+          onPress={() => navigation.navigate('AddDocuments', { addDocument: handleAddDocument })}
         >
           <Text style={styles.addButtonText}>+ Add Document</Text>
         </TouchableOpacity>
       </View>
-
 
       <FlatList
         data={documents}
@@ -149,7 +157,6 @@ export const DocumentsScreen = ({ navigation }) => {
           </View>
         )}
       />
-
 
       {renderDocumentModal()}
     </SafeAreaView>
@@ -166,11 +173,6 @@ const styles = StyleSheet.create({
     marginTop: 20,
     alignItems: 'center',
     marginBottom: 20
-  },
-  headerTitle: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: '#333',
   },
   addButton: {
     backgroundColor: '#4A90E2',
@@ -229,6 +231,19 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#888',
     marginTop: 5,
+  },
+  deleteButton: {
+    backgroundColor: '#ff4747',
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    borderRadius: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: 10,
+  },
+  deleteButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
   },
   emptyState: {
     alignItems: 'center',
