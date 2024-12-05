@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import MapView, { Marker, Polyline } from 'react-native-maps';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import MapViewDirections from 'react-native-maps-directions';
-import { View, StyleSheet, TouchableOpacity, Text, Image } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
 import 'react-native-get-random-values';
 
 const Maps = () => {
@@ -13,9 +13,9 @@ const Maps = () => {
     const [planeTime, setPlaneTime] = useState(null);
     const [currentLocation, setCurrentLocation] = useState(null);
     const [firstField, setFirstField] = useState(""); // First field for current location
-    const [secondField, setSecondField] = useState(""); // Second field for coordinates of the selected image
+    const [secondField, setSecondField] = useState(""); // Second field for coordinates of the selected location
     const mapRef = useRef(null);
-    const GOOGLE_MAPS_APIKEY = 'AIzaSyCRz4XXO5F1RvKuDZbMeo9L7CjFPj_RJKc';
+    const GOOGLE_MAPS_APIKEY = 'YOUR_GOOGLE_MAPS_API_KEY'; 
 
     useEffect(() => {
         Geolocation.getCurrentPosition(
@@ -39,25 +39,25 @@ const Maps = () => {
         );
     }, []);
 
-    const handleImagePress = (imageLatitude, imageLongitude) => {
+    const handleLocationSelect = (latitude, longitude) => {
         // Set first field (current location)
         setFirstField(`Current Location: ${currentLocation.latitude}, ${currentLocation.longitude}`);
 
-        // Set second field (coordinates of the selected image)
-        setSecondField(`Selected Location: ${imageLatitude}, ${imageLongitude}`);
+        // Set second field (coordinates of the selected location)
+        setSecondField(`Selected Location: ${latitude}, ${longitude}`);
 
-        // Update destination with the selected image coordinates
-        setDestination({ latitude: imageLatitude, longitude: imageLongitude });
+        // Update destination with the selected location coordinates
+        setDestination({ latitude, longitude });
 
         // Move map to the selected location
         mapRef.current.animateToRegion({
-            latitude: imageLatitude,
-            longitude: imageLongitude,
+            latitude,
+            longitude,
             latitudeDelta: 0.05,
             longitudeDelta: 0.05,
         }, 1000);
 
-        getTravelTimes({ latitude: imageLatitude, longitude: imageLongitude });
+        getTravelTimes({ latitude, longitude });
     };
 
     const handleDestinationSelect = (data, details = null) => {
@@ -249,15 +249,6 @@ const Maps = () => {
                 </TouchableOpacity>
             )}
 
-            {/* Images on Homepage */}
-            <TouchableOpacity onPress={() => handleImagePress(37.78825, -122.4324)}>
-                <Image source={require('./path/to/image1.jpg')} style={styles.image} />
-            </TouchableOpacity>
-
-            <TouchableOpacity onPress={() => handleImagePress(34.0522, -118.2437)}>
-                <Image source={require('./path/to/image2.jpg')} style={styles.image} />
-            </TouchableOpacity>
-
             {/* Display Fields */}
             <View style={styles.fieldsContainer}>
                 <Text style={styles.fieldText}>{firstField}</Text>
@@ -273,51 +264,50 @@ const styles = StyleSheet.create({
     },
     textInput: {
         height: 40,
-        borderColor: 'gray',
-        borderWidth: 1,
-        borderRadius: 5,
+        backgroundColor: '#fff',
+        borderRadius: 20,
         paddingLeft: 10,
+        marginBottom: 10,
     },
     travelTimeContainer: {
         position: 'absolute',
-        top: 150,
+        bottom: 20,
         left: 10,
-        zIndex: 3,
-        backgroundColor: 'white',
+        right: 10,
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
         padding: 10,
-        borderRadius: 5,
+        borderRadius: 10,
     },
     travelTimeText: {
+        color: '#fff',
         fontSize: 16,
     },
     directionsButton: {
         position: 'absolute',
-        bottom: 40,
+        bottom: 100,
         left: 10,
         right: 10,
-        backgroundColor: 'blue',
-        padding: 15,
-        borderRadius: 5,
+        backgroundColor: '#1e90ff',
+        paddingVertical: 10,
+        borderRadius: 20,
+        alignItems: 'center',
     },
     buttonText: {
-        color: 'white',
-        textAlign: 'center',
-    },
-    image: {
-        width: 100,
-        height: 100,
-        marginTop: 20,
+        color: '#fff',
+        fontSize: 18,
     },
     fieldsContainer: {
         position: 'absolute',
-        bottom: 100,
+        bottom: 150,
         left: 10,
-        zIndex: 3,
+        right: 10,
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        padding: 10,
+        borderRadius: 10,
     },
     fieldText: {
-        fontSize: 14,
-        color: 'black',
-        marginBottom: 5,
+        color: '#fff',
+        fontSize: 16,
     },
 });
 
