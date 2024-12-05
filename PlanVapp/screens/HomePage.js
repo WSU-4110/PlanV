@@ -86,13 +86,13 @@ const HomeScreen = ({navigation}) => {
               alignItems: 'flex-end',
             }}>
             <View style={{flexDirection: 'row'}}>
-              <Icon name="place" size={20} color={COLORS.text} />
+            <Image source={icons.MG} style={{width: 30, height: 30}} />
               <Text style={{marginLeft: 5, color: COLORS.text}}>
                 {place.location}
               </Text>
             </View>
             <View style={{flexDirection: 'row'}}>
-              <Icon name="star" size={20} color={COLORS.text} />
+            <Image source={icons.star} style={{width: 30, height: 30}} />
               <Text style={{marginLeft: 5, color: COLORS.text}}>5.0</Text>
             </View>
           </View>
@@ -121,13 +121,21 @@ const HomeScreen = ({navigation}) => {
           }}>
           <View style={{width: '100%', flexDirection: 'row', marginTop: 10}}>
             <View style={{flexDirection: 'row'}}>
-              <Icon name="place" size={22} color={COLORS.text} />
+            <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+              <Image 
+              source={icons.LP}
+              style={{ width: 18, height: 20 }}
+              resizeMode="contain"
+              />
+              </View>
+
               <Text style={{color: COLORS.text, marginLeft: 5}}>
                 {place.location}
               </Text>
             </View>
             <View style={{flexDirection: 'row'}}>
-              <Icon name="star" size={22} color={COLORS.text} />
+            <Image source={icons.star} style={{ width: 18, height: 20 }}
+              resizeMode="contain" />
               <Text style={{color: COLORS.text, marginLeft: 5}}>5.0</Text>
             </View>
           </View>
@@ -143,8 +151,8 @@ const HomeScreen = ({navigation}) => {
     <SafeAreaView style={{flex: 1, backgroundColor: COLORS.white}}>
       <StatusBar translucent={false} backgroundColor={COLORS.primary} />
       <View style={style.header}>
-        <Icon name="sort" size={28} color={COLORS.white} />
-        <Icon name="notifications-none" size={28} color={COLORS.white} />
+      <Image source={icons.house} style={{width: 40, height: 40}} />
+        <Image source={icons.notification} style={{width: 60, height: 60}} />
       </View>
       <ScrollView showsVerticalScrollIndicator={false}>
         <View
@@ -157,7 +165,7 @@ const HomeScreen = ({navigation}) => {
             <Text style={style.headerTitle}>Explore the</Text>
             <Text style={style.headerTitle}>beautiful places</Text>
             <View style={style.inputContainer}>
-              <Icon name="search" size={28} />
+            <Image source={icons.MG} style={{width: 15, height: 15}} />
               <TextInput
                 placeholder="Search place"
                 style={{color: COLORS.grey}}
