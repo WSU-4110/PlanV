@@ -26,6 +26,8 @@ import Contact from './screens/Contact';
 import Account from './screens/Account';
 import Checkout from './screens/Checkout';
 import AddDocuments from './screens/AddDocuments';
+import Documents from './screens/Documents';
+
 
 
 
@@ -53,7 +55,7 @@ function AuthStack() {
       <Stack.Screen name="FirstScreen" component={FirstScreen} options={{
         headerShown: false
         }}/>
-      
+
       <Stack.Screen name="Login" component={LoginPage} options={{
         headerShown: false
         }}/>
@@ -75,7 +77,7 @@ function HomeStack() {
       <Stack.Screen name="Maps" component={Maps} options={{
       headerShown: false }}/>
       <Stack.Screen name="Checkout" component={Checkout} options={{ headerShown: false }} />
-      
+
     </Stack.Navigator>
   );
 }
@@ -103,7 +105,7 @@ function SettingsStack() {
       <Stack.Screen name="Settings" component={Settings} options={{
       headerShown: false }}/>
       <Stack.Screen name="Payment" component={Payment} options={{
-      headerShown: false }}/> 
+      headerShown: false }}/>
       <Stack.Screen name="Account" component={Account} options={{
       headerShown: false }}/>
       <Stack.Screen name="Documents" component={Documents} options={{
@@ -121,7 +123,7 @@ function SettingsStack() {
 // Main tabs for Home, Booking, and Settings
 function MainAppTabs() {
     const navigation = useNavigation();
-  
+
     return (
       <Tab.Navigator
         screenOptions={({ route }) => ({
@@ -169,11 +171,11 @@ function App(): React.JSX.Element {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
-        setIsLoggedIn(true);  
+        setIsLoggedIn(true);
       } else {
-        setIsLoggedIn(false); 
+        setIsLoggedIn(false);
       }
-      setLoading(false);  
+      setLoading(false);
     });
     return () => unsubscribe();
   }, []);
@@ -183,7 +185,7 @@ function App(): React.JSX.Element {
   }
 
   return (
-    <Provider store={store}> 
+    <Provider store={store}>
       <SafeAreaProvider>
         <NavigationContainer>
           <View style={[backgroundStyle, { flex: 1 }]}>
