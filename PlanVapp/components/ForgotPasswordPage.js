@@ -8,12 +8,15 @@ import {
   useColorScheme,
   Alert,
   ActivityIndicator,
+  Image,
 } from 'react-native';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
 import { auth } from '../firebaseConfig'; // Ensure to import your Firebase configuration
 import { sendPasswordResetEmail } from 'firebase/auth'; // Import the Firebase function
+import { useNavigation } from '@react-navigation/native'; // Import useNavigation for back button
 
 const ForgotPasswordPage = () => {
+  const navigation = useNavigation(); // Initialize navigation
   const isDarkMode = useColorScheme() === 'dark';
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
@@ -42,6 +45,15 @@ const ForgotPasswordPage = () => {
 
   return (
     <View style={[styles.container, { backgroundColor: isDarkMode ? Colors.darker : Colors.lighter }]}>
+
+      {/* Back Button with exit-door.png */}
+      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+        <Image
+          source={require('../assets/exit-door.png')} // Path to your exit-door.png image
+          style={styles.backButtonImage}
+        />
+      </TouchableOpacity>
+
       <Text style={[styles.title, { color: isDarkMode ? Colors.white : Colors.black }]}>
         Forgot Password
       </Text>
@@ -73,6 +85,17 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     justifyContent: 'center',
+  },
+  backButton: {
+    position: 'absolute',
+    top: 30,
+    left: 20,
+    padding: 10,
+  },
+  backButtonImage: {
+    width: 30, // Set the desired size for the icon
+    height: 30, // Set the desired size for the icon
+    resizeMode: 'contain', // Ensure the image is contained within the specified width and height
   },
   title: {
     fontSize: 28,
