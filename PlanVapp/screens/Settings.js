@@ -10,49 +10,49 @@ export default function SettingsScreen({ navigation }) {
         <ScrollView style={styles.container}>
             <TouchableOpacity style={styles.option} onPress={() => navigation.navigate('Account')}>
                 <View style={styles.optionRow}>
-                    <Image source={require('../assets/people.png')} style={styles.icon} />
+                    <Image source={require('../assets/people.png')} style={styles.image} />
                     <Text style={styles.optionText}>Account and Security</Text>
                 </View>
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.option} onPress={() => navigation.navigate('Notifications')}>
                 <View style={styles.optionRow}>
-                    <Image source={require('../assets/perspective-dice-six-faces-random.png')} style={styles.icon} />
+                    <Image source={require('../assets/perspective-dice-six-faces-random.png')} style={styles.image} />
                     <Text style={styles.optionText}>Notifications</Text>
                 </View>
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.option} onPress={() => navigation.navigate('Appearance')}>
                 <View style={styles.optionRow}>
-                    <Image source={require('../assets/lipstick.png')} style={styles.icon} />
+                    <Image source={require('../assets/lipstick.png')} style={styles.image} />
                     <Text style={styles.optionText}>Appearance</Text>
                 </View>
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.option} onPress={() => navigation.navigate('Payment')}>
                 <View style={styles.optionRow}>
-                    <Image source={require('../assets/pay-money.png')} style={styles.icon} />
+                    <Image source={require('../assets/pay-money.png')} style={styles.image} />
                     <Text style={styles.optionText}>Payment Information</Text>
                 </View>
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.option} onPress={() => navigation.navigate('Documents')}>
                 <View style={styles.optionRow}>
-                    <Image source={require('../assets/full-folder.png')} style={styles.icon} />
+                    <Image source={require('../assets/full-folder.png')} style={styles.image} />
                     <Text style={styles.optionText}>My Documents</Text>
                 </View>
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.option} onPress={() => navigation.navigate('FAQ')}>
                 <View style={styles.optionRow}>
-                    <Image source={require('../assets/carillon.png')} style={styles.icon} />
+                    <Image source={require('../assets/carillon.png')} style={styles.image} />
                     <Text style={styles.optionText}>FAQ</Text>
                 </View>
             </TouchableOpacity>
             
             <TouchableOpacity style={styles.option} onPress={handleContact}>
                 <View style={styles.optionRow}>
-                    <Image source={require('../assets/people.png')} style={styles.icon} />
+                    <Image source={require('../assets/people.png')} style={styles.image} />
                     <Text style={styles.optionText}>Contact Us</Text>
                 </View>
             </TouchableOpacity>
@@ -82,7 +82,7 @@ const styles = StyleSheet.create({
     optionText: {
         marginLeft: 10,
         fontSize: 16,
-        fontFamily: 'Gotham-Light', 
+        fontFamily: 'Gotham-Light',
     },
     logoutButton: {
         marginTop: 20,
@@ -96,13 +96,9 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         fontFamily: 'Gotham-Light',
     },
-    icon: {
+    image: {
         width: 30,
         height: 30,
         resizeMode: 'contain',
     },
 });
-
-module.exports = {
-    assets: ['./assets/fonts/'],
-};
