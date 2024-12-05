@@ -24,7 +24,7 @@ import Maps from './screens/Maps';
 import Notifications from './screens/Notifications';
 import Contact from './screens/Contact';
 import Account from './screens/Account';
-import Checkout from './screens/Checkout'
+import Checkout from './screens/Checkout';
 
 
 
