@@ -1,7 +1,5 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, Image, StyleSheet, TextInput, TouchableOpacity, Alert, ScrollView, Animated } from 'react-native';
-import PlanVLogo from '../assets/PlanVLogo.png'; // PlanV logo image
 import KeyIcon from '../assets/key.png'; // Key icon for password
 import PadlockIcon from '../assets/padlock.png'; // Padlock icon for username
 import { auth } from '../firebaseConfig'; // Import auth from your config
@@ -11,38 +9,6 @@ const LoginPage = ({ navigation }) => {
     const [username, setUsername] = useState(''); // State for username
     const [password, setPassword] = useState(''); // State for password
     const [isFlashing, setIsFlashing] = useState(false); // State for flash effect
-    const [flavorIndex, setFlavorIndex] = useState(0); // Index for flavor text
-    const fadeAnim = useRef(new Animated.Value(1)).current; // Animation state for fading
-
-    // Flavor text related to planning a trip
-    const flavorTexts = [
-        "Plan your perfect getaway today!",
-        "Find the best hotels and accommodations.",
-        "Book flights, hotels, and more in one place.",
-        "Your travel companion, PlanV, has you covered!",
-        "All your travel needs in one app!"
-    ];
-
-    // Effect to cycle through the flavor texts every 5 seconds
-    useEffect(() => {
-        const interval = setInterval(() => {
-            Animated.timing(fadeAnim, {
-                toValue: 0,
-                duration: 500,
-                useNativeDriver: true, // Use native driver for better performance
-            }).start(() => {
-                // Change flavor text index
-                setFlavorIndex((prevIndex) => (prevIndex + 1) % flavorTexts.length);
-                Animated.timing(fadeAnim, {
-                    toValue: 1,
-                    duration: 500,
-                    useNativeDriver: true, // Use native driver for better performance
-                }).start();
-            });
-        }, 5000); // Change every 5 seconds
-
-        return () => clearInterval(interval); // Cleanup on unmount
-    }, [fadeAnim]);
 
     // Define the login function
     const handleLogin = () => {
@@ -62,25 +28,11 @@ const LoginPage = ({ navigation }) => {
             });
     };
 
-    const handleCreateAccount = () => {
-        navigation.navigate('CreateAccount');
-    };
-
     return (
         <ScrollView contentContainerStyle={styles.container}>
-            <Image 
-                source={PlanVLogo} 
-                style={styles.logo} 
-            />
-            <Animated.View style={[styles.flavorTextContainer, { opacity: fadeAnim }]}>
-                <Animated.Text 
-                    style={styles.flavorText}
-                    numberOfLines={2} // Limit to 2 lines
-                    ellipsizeMode="tail" // Add ellipses if text overflows
-                >
-                    {flavorTexts[flavorIndex]}
-                </Animated.Text>
-            </Animated.View>
+            {/* Title Section */}
+            <Text style={styles.title}>Login</Text>
+
             <View style={styles.inputContainer}>
                 <Image source={PadlockIcon} style={styles.icon} />
                 <TextInput
@@ -112,9 +64,6 @@ const LoginPage = ({ navigation }) => {
                     {isFlashing ? 'Happy travels!' : 'Login'} {/* Change button text */}
                 </Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={handleCreateAccount}>
-                <Text style={styles.createAccountText}>Create Account</Text>
-            </TouchableOpacity>
             <TouchableOpacity onPress={() => navigation.navigate('ForgotPassword')}>
                 <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
             </TouchableOpacity>
@@ -130,32 +79,20 @@ const styles = StyleSheet.create({
         backgroundColor: '#f7f9fc',
         padding: 20,
     },
-    logo: {
-        width: 250,
-        height: 200,
-        resizeMode: 'contain',
-        marginBottom: 20,
-    },
-    flavorTextContainer: {
-        height: 50, 
-        justifyContent: 'center', 
-        marginBottom: 20,
-    },
-    flavorText: {
-        fontSize: 20,
+    title: {
+        fontSize: 30,
         fontWeight: 'bold',
         color: '#333',
-        textAlign: 'center',
-        width: 300, 
+        marginBottom: 40, // Spacing between title and input fields
     },
     inputContainer: {
-        flexDirection: 'row', 
+        flexDirection: 'row',
         alignItems: 'center',
         width: '100%',
         height: 50,
         borderColor: '#ccc',
         borderWidth: 1,
-        borderRadius: 25, 
+        borderRadius: 25,
         marginBottom: 15,
         paddingLeft: 10,
         backgroundColor: '#fff',
@@ -164,16 +101,16 @@ const styles = StyleSheet.create({
     icon: {
         width: 24,
         height: 24,
-        marginRight: 10, 
+        marginRight: 10,
     },
     input: {
-        flex: 1, 
+        flex: 1,
         height: '100%',
         paddingLeft: 10,
     },
     loginButton: {
-        backgroundColor: '#000000', 
-        borderRadius: 25, 
+        backgroundColor: '#000000',
+        borderRadius: 25,
         height: 50,
         width: '100%',
         justifyContent: 'center',
@@ -189,12 +126,7 @@ const styles = StyleSheet.create({
         fontSize: 18,
     },
     flashButtonText: {
-        color: '#333333', 
-    },
-    createAccountText: {
-        color: '#4a90e2',
-        textDecorationLine: 'underline',
-        marginBottom: 10,
+        color: '#333333',
     },
     forgotPasswordText: {
         color: '#4a90e2',
