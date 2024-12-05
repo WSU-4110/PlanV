@@ -1,15 +1,11 @@
 import Geolocation from '@react-native-community/geolocation';
 import React, { useState, useEffect, useRef } from 'react';
 import MapView, { Marker, Polyline } from 'react-native-maps';
-import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
-import MapViewDirections from 'react-native-maps-directions';
-import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
-import 'react-native-get-random-values';
+import { View, StyleSheet, Text } from 'react-native';
 
 const Maps = ({ route }) => {
     const [origin, setOrigin] = useState(null);
     const [destination, setDestination] = useState(null);
-    const [drivingTime, setDrivingTime] = useState(null);
     const [planeTime, setPlaneTime] = useState(null);
     const [currentLocation, setCurrentLocation] = useState(null);
     const mapRef = useRef(null);
@@ -22,8 +18,10 @@ const Maps = ({ route }) => {
                 const userLocation = { latitude, longitude };
                 setCurrentLocation(userLocation);
 
-                // Automatically set origin from user's location and destination from route params
+                // Automatically set origin from user's location
                 setOrigin(userLocation);
+
+                // Set destination from passed parameters
                 if (route.params && route.params.destination) {
                     const destinationCoords = route.params.destination;
                     setDestination(destinationCoords);
@@ -91,15 +89,6 @@ const Maps = ({ route }) => {
             >
                 {origin && <Marker coordinate={origin} />}
                 {destination && <Marker coordinate={destination} />}
-                {origin && destination && (
-                    <MapViewDirections
-                        origin={origin}
-                        destination={destination}
-                        apikey={GOOGLE_MAPS_APIKEY}
-                        strokeWidth={3}
-                        strokeColor="hotpink"
-                    />
-                )}
             </MapView>
 
             {planeTime && (
