@@ -100,7 +100,7 @@ const styles = StyleSheet.create({
     },
     headerContainer: {
         alignItems: 'center',
-        marginBottom: 30,
+        marginBottom: 15,
     },
     illustration: {
         width: 200,
@@ -127,6 +127,7 @@ const styles = StyleSheet.create({
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
         shadowRadius: 8,
+        marginBottom: 20,
         elevation: 5,
     },
     option: {
@@ -150,7 +151,7 @@ const styles = StyleSheet.create({
         color: '#7A7A7A',
     },
     saveButton: {
-        backgroundColor: '#FF69B4', // Cute pink
+        backgroundColor: '#2599fa',
         borderRadius: 10,
         padding: 15,
         alignItems: 'center',
