@@ -18,18 +18,18 @@ import COLORS from '../constants/colors';
 import places from '../constants/places';
 import icons from '../constants/icons';
 
-const {width} = Dimensions.get('screen');
+const { width } = Dimensions.get('screen');
 
 // Update COLORS to reflect the changes
 COLORS.primary = '#FFC72C'; // Yellow
 COLORS.text = '#000000'; // Black
 
-const HomeScreen = ({navigation}) => {
+const HomeScreen = ({ navigation }) => {
   const categoryIcons = [
-      <Image source={icons.airplane} style={{width: 40, height: 30}} />,
-      <Image source={icons.map} style={{width: 40, height: 30}} />,
-      <Image source={icons.cloud} style={{width: 40, height: 30}} />,
-      <Image source={icons.user} style={{width: 40, height: 35}} />,
+      <Image source={icons.airplane} style={{ width: 40, height: 30 }} />,
+      <Image source={icons.map} style={{ width: 40, height: 30 }} />,
+      <Image source={icons.cloud} style={{ width: 40, height: 30 }} />,
+      <Image source={icons.user} style={{ width: 40, height: 35 }} />,
   ];
 
   const ListCategories = () => {
@@ -60,7 +60,7 @@ const HomeScreen = ({navigation}) => {
     );
   };
 
-  const Card = ({place}) => {
+  const Card = ({ place }) => {
     return (
       <TouchableOpacity
         activeOpacity={0.8}
@@ -82,15 +82,15 @@ const HomeScreen = ({navigation}) => {
               flexDirection: 'row',
               alignItems: 'flex-end',
             }}>
-            <View style={{flexDirection: 'row'}}>
+            <View style={{ flexDirection: 'row' }}>
               <Icon name="place" size={20} color={COLORS.text} />
-              <Text style={{marginLeft: 5, color: COLORS.text}}>
+              <Text style={{ marginLeft: 5, color: COLORS.text }}>
                 {place.location}
               </Text>
             </View>
-            <View style={{flexDirection: 'row'}}>
+            <View style={{ flexDirection: 'row' }}>
               <Icon name="star" size={20} color={COLORS.text} />
-              <Text style={{marginLeft: 5, color: COLORS.text}}>5.0</Text>
+              <Text style={{ marginLeft: 5, color: COLORS.text }}>5.0</Text>
             </View>
           </View>
         </ImageBackground>
@@ -98,7 +98,7 @@ const HomeScreen = ({navigation}) => {
     );
   };
 
-  const RecommendedCard = ({place}) => {
+  const RecommendedCard = ({ place }) => {
     return (
       <TouchableOpacity
         activeOpacity={0.8}
@@ -119,19 +119,19 @@ const HomeScreen = ({navigation}) => {
               justifyContent: 'space-between',
               alignItems: 'flex-end',
             }}>
-            <View style={{width: '100%', flexDirection: 'row', marginTop: 10}}>
-              <View style={{flexDirection: 'row'}}>
+            <View style={{ width: '100%', flexDirection: 'row', marginTop: 10 }}>
+              <View style={{ flexDirection: 'row' }}>
                 <Icon name="place" size={22} color={COLORS.text} />
-                <Text style={{color: COLORS.text, marginLeft: 5}}>
+                <Text style={{ color: COLORS.text, marginLeft: 5 }}>
                   {place.location}
                 </Text>
               </View>
-              <View style={{flexDirection: 'row'}}>
+              <View style={{ flexDirection: 'row' }}>
                 <Icon name="star" size={22} color={COLORS.text} />
-                <Text style={{color: COLORS.text, marginLeft: 5}}>5.0</Text>
+                <Text style={{ color: COLORS.text, marginLeft: 5 }}>5.0</Text>
               </View>
             </View>
-            <Text style={{color: COLORS.text, fontSize: 13}}>
+            <Text style={{ color: COLORS.text, fontSize: 13 }}>
               {place.details}
             </Text>
           </View>
@@ -141,51 +141,43 @@ const HomeScreen = ({navigation}) => {
   };
 
   return (
-    <SafeAreaView style={{flex: 1, backgroundColor: COLORS.white}}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.white }}>
       <StatusBar translucent={false} backgroundColor={COLORS.primary} />
       <View style={style.header}>
         <Icon name="sort" size={28} color={COLORS.white} />
-        <Icon name="notifications-none" size={28} color={COLORS.white} />
+        <Text style={style.headerText}>Explore</Text>
+        <Icon name="person" size={28} color={COLORS.white} />
       </View>
-      <ScrollView showsVerticalScrollIndicator={false}>
-        <View
-          style={{
-            backgroundColor: COLORS.primary,
-            height: 120,
-            paddingHorizontal: 20,
-          }}>
-          <View style={{flex: 1}}>
-            <Text style={style.headerTitle}>Explore the</Text>
-            <Text style={style.headerTitle}>beautiful places</Text>
-            <View style={style.inputContainer}>
-              <Icon name="search" size={28} />
-              <TextInput
-                placeholder="Search place"
-                style={{color: COLORS.grey}}
-              />
-            </View>
-          </View>
+
+      <ScrollView>
+        <View style={style.searchContainer}>
+          <TextInput
+            style={style.searchInput}
+            placeholder="Search for a destination"
+          />
         </View>
+
         <ListCategories />
-        <Text style={style.sectionTitle}>Places</Text>
-        <View>
-          <FlatList
-            contentContainerStyle={{paddingLeft: 20}}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            data={places}
-            renderItem={({item}) => <Card place={item} />}
-          />
-          <Text style={style.sectionTitle}>Recommended</Text>
-          <FlatList
-            snapToInterval={width - 20}
-            contentContainerStyle={{paddingLeft: 20, paddingBottom: 20}}
-            showsHorizontalScrollIndicator={false}
-            horizontal
-            data={places}
-            renderItem={({item}) => <RecommendedCard place={item} />}
-          />
-        </View>
+        <Text style={style.sectionTitle}>Top Destinations</Text>
+
+        <FlatList
+          data={places}
+          renderItem={({ item }) => <Card place={item} />}
+          keyExtractor={(item) => item.id}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={style.topDestinationContainer}
+        />
+        <Text style={style.sectionTitle}>Recommended</Text>
+
+        <FlatList
+          data={places}
+          renderItem={({ item }) => <RecommendedCard place={item} />}
+          keyExtractor={(item) => item.id}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={style.recommendedContainer}
+        />
       </ScrollView>
     </SafeAreaView>
   );
@@ -193,65 +185,73 @@ const HomeScreen = ({navigation}) => {
 
 const style = StyleSheet.create({
   header: {
-    paddingVertical: 20,
-    paddingHorizontal: 20,
     flexDirection: 'row',
+    paddingHorizontal: 20,
     justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 10,
     backgroundColor: COLORS.primary,
+    height: 100,
   },
-  headerTitle: {
-    color: COLORS.text, // Changed to black text
+  headerText: {
+    fontSize: 30,
+    color: COLORS.white,
     fontWeight: 'bold',
-    fontSize: 23,
   },
-  inputContainer: {
-    height: 60,
-    width: '100%',
-    backgroundColor: COLORS.white,
-    borderRadius: 10,
-    position: 'absolute',
-    top: 90,
-    flexDirection: 'row',
+  searchContainer: {
     paddingHorizontal: 20,
-    alignItems: 'center',
-    elevation: 12,
+    marginVertical: 10,
   },
-  categoryContainer: {
-    marginTop: 60,
-    marginHorizontal: 20,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  iconContainer: {
-    height: 60,
-    width: 60,
-    backgroundColor: COLORS.secondary,
-    justifyContent: 'center',
-    alignItems: 'center',
+  searchInput: {
+    backgroundColor: COLORS.lightGray,
+    height: 40,
     borderRadius: 10,
+    paddingHorizontal: 20,
+    fontSize: 16,
   },
   sectionTitle: {
-    marginHorizontal: 20,
-    marginVertical: 20,
+    fontSize: 18,
     fontWeight: 'bold',
-    fontSize: 20,
-    color: COLORS.text, // Changed to black text
+    marginHorizontal: 20,
+    marginVertical: 10,
+  },
+  topDestinationContainer: {
+    paddingLeft: 20,
+  },
+  recommendedContainer: {
+    paddingLeft: 20,
+  },
+  categoryContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 20,
+    marginTop: 10,
+    paddingHorizontal: 30,
+  },
+  iconContainer: {
+    backgroundColor: COLORS.white,
+    width: 60,
+    height: 60,
+    borderRadius: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 5,
   },
   cardImage: {
-    height: 220,
-    width: width / 2,
+    width: width * 0.7,
+    height: 200,
+    borderRadius: 15,
     marginRight: 20,
-    padding: 10,
-    overflow: 'hidden',
-    borderRadius: 10,
+    padding: 20,
+    justifyContent: 'flex-end',
   },
   rmCardImage: {
-    width: width - 40,
-    height: 200,
+    width: width * 0.85,
+    height: 230,
+    borderRadius: 15,
     marginRight: 20,
-    borderRadius: 10,
-    overflow: 'hidden',
-    padding: 10,
+    padding: 20,
+    justifyContent: 'flex-end',
   },
 });
 
