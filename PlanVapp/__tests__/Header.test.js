@@ -3,15 +3,14 @@ import { render } from '@testing-library/react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import Header from '../components/Header';
 
-test('renders all filters correctly', () => {
-  const { getByText } = render(
-    <NavigationContainer>
-      <Header />
-    </NavigationContainer>
-  );
-
-  // Assert all filters are rendered
-  expect(getByText('Stays')).toBeTruthy();
-  expect(getByText('Flights')).toBeTruthy();
-  expect(getByText('Car Rental')).toBeTruthy();
+describe('Header Component - Render', () => {
+  it('renders correctly', () => {
+    const { getByText } = render(
+      <NavigationContainer>
+        <Header handleSelection={jest.fn()} />
+      </NavigationContainer>
+    );
+    expect(getByText('Flight')).toBeTruthy();
+    expect(getByText('Hotel')).toBeTruthy();
+  });
 });

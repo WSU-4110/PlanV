@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator, Alert, ScrollView, Image } from 'react-native';
 import { auth } from '../firebaseConfig';
 import { createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
-import { firestore } from '@react-native-firebase/firestore'; 
+import { getFirestore } from 'firebase/firestore';
 import ExitDoorIcon from '../assets/exit-door.png'; 
 
 const CreateAccountPage = ({ navigation }) => {
@@ -16,19 +16,7 @@ const CreateAccountPage = ({ navigation }) => {
             .then((userCredential) => {
                 const user = userCredential.user;
 
-                firestore()
-                    .collection('users')
-                    .doc(user.uid) 
-                    .set({
-                        email: user.email,
-                        createdAt: new Date(),
-                    })
-                    .then(() => {
-                        console.log('User data stored in Firestore!');
-                    })
-                    .catch((error) => {
-                        console.error('Error storing user data:', error);
-                    });
+            
 
                 sendEmailVerification(user)
                     .then(() => {
