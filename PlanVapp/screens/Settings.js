@@ -1,104 +1,149 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Linking, ScrollView, Image } from 'react-native';
+import { 
+  View, 
+  Text, 
+  TouchableOpacity, 
+  StyleSheet, 
+  Linking, 
+  SafeAreaView 
+} from 'react-native';
+import { auth } from '../firebaseConfig'; 
 
-export default function SettingsScreen({ navigation }) {
+export const SettingsScreen = ({ navigation }) => {
     const handleContact = () => {
         Linking.openURL('mailto:planvapp@gmail.com');
     };
 
-    return (
-        <ScrollView style={styles.container}>
-            <TouchableOpacity style={styles.option} onPress={() => navigation.navigate('Account')}>
-                <View style={styles.optionRow}>
-                    <Image source={require('../assets/people.png')} style={styles.image} />
-                    <Text style={styles.optionText}>Account and Security</Text>
-                </View>
-            </TouchableOpacity>
+    const handleLogout = () => {
+        auth.signOut();
+        navigation.navigate('Login');
+    };
 
-            <TouchableOpacity style={styles.option} onPress={() => navigation.navigate('Notifications')}>
-                <View style={styles.optionRow}>
-                    <Image source={require('../assets/perspective-dice-six-faces-random.png')} style={styles.image} />
-                    <Text style={styles.optionText}>Notifications</Text>
-                </View>
-            </TouchableOpacity>
-
-            <TouchableOpacity style={styles.option} onPress={() => navigation.navigate('Appearance')}>
-                <View style={styles.optionRow}>
-                    <Image source={require('../assets/lipstick.png')} style={styles.image} />
-                    <Text style={styles.optionText}>Appearance</Text>
-                </View>
-            </TouchableOpacity>
-
-            <TouchableOpacity style={styles.option} onPress={() => navigation.navigate('Payment')}>
-                <View style={styles.optionRow}>
-                    <Image source={require('../assets/pay-money.png')} style={styles.image} />
-                    <Text style={styles.optionText}>Payment Information</Text>
-                </View>
-            </TouchableOpacity>
-
-            <TouchableOpacity style={styles.option} onPress={() => navigation.navigate('Documents')}>
-                <View style={styles.optionRow}>
-                    <Image source={require('../assets/full-folder.png')} style={styles.image} />
-                    <Text style={styles.optionText}>My Documents</Text>
-                </View>
-            </TouchableOpacity>
-
-            <TouchableOpacity style={styles.option} onPress={() => navigation.navigate('FAQ')}>
-                <View style={styles.optionRow}>
-                    <Image source={require('../assets/carillon.png')} style={styles.image} />
-                    <Text style={styles.optionText}>FAQ</Text>
-                </View>
-            </TouchableOpacity>
-            
-            <TouchableOpacity style={styles.option} onPress={handleContact}>
-                <View style={styles.optionRow}>
-                    <Image source={require('../assets/people.png')} style={styles.image} />
-                    <Text style={styles.optionText}>Contact Us</Text>
-                </View>
-            </TouchableOpacity>
-
-            <TouchableOpacity style={styles.logoutButton} onPress={() => navigation.navigate('Login')}>
-                <Text style={styles.logoutText}>Log Out</Text>
-            </TouchableOpacity>
-        </ScrollView>
+    const SettingsOption = ({ icon, text, onPress, testID }) => (
+        <TouchableOpacity 
+            style={styles.option} 
+            onPress={onPress}
+            testID={testID}
+        >
+            <Text style={styles.optionIcon}>{icon}</Text>
+            <Text style={styles.optionText}>{text}</Text>
+            <Text style={styles.chevron}>➡️</Text>
+        </TouchableOpacity>
     );
-}
+
+    return (
+        <SafeAreaView style={styles.container}>
+            <View style={styles.settingsSection}>
+                <SettingsOption 
+                    icon="👤"
+                    text="Account" 
+                    onPress={() => navigation.navigate('Account')}
+                    testID="account-button"
+                />
+
+                <SettingsOption 
+                    icon="🔔"
+                    text="Notifications" 
+                    onPress={() => navigation.navigate('Notifications')}
+                    testID="notifications-button"
+                />
+
+                <SettingsOption 
+                    icon="📄"
+                    text="Documents" 
+                    onPress={() => navigation.navigate('Documents')}
+                    testID="Documents-button"
+                />  
+
+                <SettingsOption 
+                    icon="💳"
+                    text="Payment Information" 
+                    onPress={() => navigation.navigate('Payment')}
+                    testID="payment-button"
+                />
+
+                <SettingsOption 
+                    icon="❓"
+                    text="FAQ" 
+                    onPress={() => navigation.navigate('Faq')}
+                    testID="FAQ-button"
+                />
+
+                <SettingsOption 
+                    icon="✉️"
+                    text="Contact Us" 
+                    onPress={() => navigation.navigate('Contact')}
+                    testID="contact-button"
+                />
+            </View>
+
+            <TouchableOpacity 
+                style={styles.logoutButton} 
+                onPress={handleLogout}
+                testID="logout-button"
+            >
+                <Text style={styles.logoutText}>🚪 Log Out</Text>
+            </TouchableOpacity>
+        </SafeAreaView>
+    );
+};
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        padding: 20,
+        flex: 1, 
+        paddingVertical: 20,
+        backgroundColor: '#d0eefe',
+        paddingHorizontal: 20,
+        paddingBottom: 10, 
+    },
+    settingsSection: {
+        backgroundColor: 'white',
+        borderRadius: 15,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+        elevation: 3,
     },
     option: {
-        padding: 15,
-        borderBottomWidth: 1,
-        borderBottomColor: '#ccc',
-        marginBottom: 10,
-    },
-    optionRow: {
         flexDirection: 'row',
         alignItems: 'center',
+        justifyContent: 'space-between',
+        padding: 15,
+        borderBottomWidth: 1,
+        borderBottomColor: '#f0f0f0',
+    },
+    optionIcon: {
+        fontSize: 24,
+        marginRight: 15,
     },
     optionText: {
-        marginLeft: 10,
+        flex: 1,
         fontSize: 16,
-        fontFamily: 'Gotham-Light',
+        color: '#333',
+    },
+    chevron: {
+        fontSize: 18,
+        color: '#888',
     },
     logoutButton: {
         marginTop: 20,
         padding: 15,
-        backgroundColor: '#ff4d4d',
-        borderRadius: 5,
+        backgroundColor: '#FF6B6B',
+        borderRadius: 10,
         alignItems: 'center',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+        elevation: 3,
     },
     logoutText: {
         color: 'white',
         fontWeight: 'bold',
-        fontFamily: 'Gotham-Light',
-    },
-    image: {
-        width: 30,
-        height: 30,
-        resizeMode: 'contain',
+        fontSize: 16,
     },
 });
+
+export default SettingsScreen;
+
