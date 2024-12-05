@@ -14,6 +14,7 @@ export const LP = require('./../assets/icons/location_pin.png');
 export const person = require('./../assets/icons/person_icon.png');
 export const notification = require('./../assets/icons/notification.png');
 export const house = require('./../assets/icons/house_icon.png');
+export const bag = require('./../assets/icons/bag-shopping-icon.png');
 
 export default {
     airplane,
@@ -32,4 +33,5 @@ export default {
     person,
     notification,
     house,
+    bag,
 };
