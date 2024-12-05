@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import CreditCard from 'react-native-credit-card';
+
+import React, { useState, useRef } from 'react';
+import { View, Text, TextInput, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 
 export default function Payment({ navigation }) {
     const [cardNumber, setCardNumber] = useState('');
@@ -9,98 +8,68 @@ export default function Payment({ navigation }) {
     const [cvv, setCvv] = useState('');
     const [cardName, setCardName] = useState('');
     const [showForm, setShowForm] = useState(false);
-    const [savedCard, setSavedCard] = useState(null);
+    
+    // Ref to hold cards data
+    const cardsRef = useRef([]);
 
     const handleAddCard = () => {
         setShowForm(true);
     };
 
-    const handleSaveCard = async () => {
+    const handleSaveCard = () => {
         if (cardNumber.length === 16 && cvv.length === 3) {
-            const lastFourDigits = cardNumber.slice(-4); // Last 4 digits
-            const maskedCardNumber = `**** **** **** ${lastFourDigits}`; // Proper card format
-            const maskedCVV = cvv[0] + '**'; // Masked CVV
+            const lastFourDigits = cardNumber.slice(-4);
             const newCard = {
-                number: maskedCardNumber,
-                expiry: expiryDate,
-                name: cardName || "Cardholder",
-                cvc: maskedCVV,
+                lastFourDigits,
+                expiryDate,
+                cardName,
             };
-            setSavedCard(newCard);
-            setShowForm(false);
+            // Update ref and trigger re-render by using state
+            cardsRef.current.push(newCard);
+            setShowForm(false); // Close the form
+            // Clear input fields
             setCardNumber('');
             setExpiryDate('');
             setCvv('');
             setCardName('');
-            await AsyncStorage.setItem('savedCard', JSON.stringify(newCard));
         } else {
             alert('Please enter valid card details.');
         }
     };
 
-    const handleDeleteCard = async () => {
-        setSavedCard(null);
-        await AsyncStorage.removeItem('savedCard');
-        setShowForm(false);
+    const handleDeleteCard = (index) => {
+        cardsRef.current.splice(index, 1); // Remove card from ref
+        // Force a re-render by using an empty state update
+        setShowForm((prev) => !prev);
     };
 
-    // Navigate to Settings screen
     const goBack = () => {
-        navigation.navigate('Settings'); // Takes you to the Settings screen
+        navigation.goBack();
     };
-
-    const handleExpiryChange = (text) => {
-        if (text.length === 2 && !text.includes('/')) {
-            setExpiryDate(text + '/');
-        } else {
-            setExpiryDate(text);
-        }
-    };
-
-    useEffect(() => {
-        const fetchSavedCard = async () => {
-            const storedCard = await AsyncStorage.getItem('savedCard');
-            if (storedCard) {
-                setSavedCard(JSON.parse(storedCard));
-            }
-        };
-        fetchSavedCard();
-    }, []);
 
     return (
         <View style={styles.container}>
-            <TouchableOpacity style={styles.transparentButton} onPress={goBack}>
-                <Image source={require('../assets/exit-door.png')} style={styles.exitIcon} />
+            {/* Back text */}
+            <TouchableOpacity onPress={goBack}>
+                <Text style={styles.textButton}>Back</Text>
             </TouchableOpacity>
 
-            <ScrollView contentContainerStyle={styles.scrollView}>
-                {savedCard ? (
-                    <View style={styles.cardContainerTop}>
-                        <CreditCard
-                            type="visa"
-                            imageFront={require('../assets/card-front.png')}
-                            imageBack={require('../assets/card-back.png')}
-                            shiny={false}
-                            bar={false}
-                            focused="number"
-                            number={savedCard.number}
-                            name={savedCard.name}
-                            expiry={savedCard.expiry}
-                            cvc={savedCard.cvc}
-                            style={styles.creditCard}
-                        />
-                        <TouchableOpacity onPress={handleDeleteCard} style={styles.removeCardButton}>
-                            <Image
-                                source={require('../assets/credit-card-destruction.png')}
-                                style={styles.removeCardIcon}
-                            />
-                            <Text style={styles.removeCardText}>Remove Card</Text>
-                        </TouchableOpacity>
-                    </View>
+            <ScrollView style={styles.scrollView}>
+                {cardsRef.current.length > 0 ? (
+                    cardsRef.current.map((card, index) => (
+                        <View key={index} style={styles.cardDisplay}>
+                            <Text>Card: **** **** **** {card.lastFourDigits}</Text>
+                            <Text>Name: {card.cardName}</Text>
+                            <Text>Expiry: {card.expiryDate}</Text>
+                            <TouchableOpacity onPress={() => handleDeleteCard(index)}>
+                                <Text style={styles.textButton}>Delete Card</Text>
+                            </TouchableOpacity>
+                        </View>
+                    ))
                 ) : (
-                    <TouchableOpacity onPress={handleAddCard} style={styles.noCardTop}>
-                        <Text style={styles.noCardText}>Currently no cards, add card?</Text>
-                    </TouchableOpacity>
+                    <View style={styles.noCard}>
+                        <Text>Currently no cards, add card?</Text>
+                    </View>
                 )}
 
                 {showForm && (
@@ -117,8 +86,7 @@ export default function Payment({ navigation }) {
                             style={styles.input}
                             placeholder="Expiry Date (MM/YY)"
                             value={expiryDate}
-                            onChangeText={handleExpiryChange}
-                            maxLength={5}
+                            onChangeText={setExpiryDate}
                         />
                         <TextInput
                             style={styles.input}
@@ -134,12 +102,19 @@ export default function Payment({ navigation }) {
                             value={cardName}
                             onChangeText={setCardName}
                         />
-                        <TouchableOpacity style={styles.fancyButton} onPress={handleSaveCard}>
-                            <Text style={styles.buttonText}>Save Card</Text>
+                        <TouchableOpacity onPress={handleSaveCard}>
+                            <Text style={styles.textButton}>Save Card</Text>
                         </TouchableOpacity>
                     </View>
                 )}
             </ScrollView>
+
+            {/* Add Card text */}
+            {!showForm && (
+                <TouchableOpacity onPress={handleAddCard}>
+                    <Text style={styles.textButton}>Add Card</Text>
+                </TouchableOpacity>
+            )}
         </View>
     );
 }
@@ -147,78 +122,34 @@ export default function Payment({ navigation }) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 10,
+        padding: 20,
         justifyContent: 'space-between',
     },
     scrollView: {
-        flexGrow: 1,
+        flex: 1,
     },
     input: {
-        height: 50,
+        height: 40,
         borderColor: 'gray',
         borderWidth: 1,
-        marginBottom: 20, // Keeping your original value here
+        marginBottom: 12,
         paddingHorizontal: 10,
         borderRadius: 5,
-        fontFamily: 'Gotham',
     },
-    cardContainerTop: {
-        alignItems: 'center',
-        marginBottom: 720, // Keeping your original value here as well
-        marginTop: 15,
+    cardDisplay: {
+        padding: 20,
+        backgroundColor: '#f9f9f9',
+        borderRadius: 10,
+        marginBottom: 12,
     },
-    creditCard: {
-        width: 300,
-        height: 135,
-    },
-    noCardTop: {
+    noCard: {
         justifyContent: 'center',
         alignItems: 'center',
-        marginTop: 20,
+        marginTop: 50,
     },
-    noCardText: {
-        fontSize: 15,
-        color: '#007AFF',
-        textDecorationLine: 'underline',
-    },
-    fancyButton: {
-        backgroundColor: '#007AFF',
-        paddingVertical: 10,
-        paddingHorizontal: 10,
-        borderRadius: 8,
-        alignItems: 'center',
-    },
-    buttonText: {
-        color: '#FFF',
-        fontSize: 16,
-        fontWeight: 'bold',
-    },
-    removeCardButton: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginTop: 10,
-        backgroundColor: 'red',
-        paddingVertical: 10,
-        paddingHorizontal: 15,
-        borderRadius: 8,
-    },
-    removeCardIcon: {
-        width: 20,
-        height: 20,
-        marginRight: 10,
-    },
-    removeCardText: {
-        color: 'white',
-        fontSize: 14,
-        fontWeight: 'bold',
-        fontFamily: 'Gotham',
-    },
-    transparentButton: {
-        backgroundColor: 'transparent',
-        padding: 10,
-    },
-    exitIcon: {
-        width: 30,
-        height: 30,
+    textButton: {
+        color: 'blue', // Change color to indicate it's clickable
+        textDecorationLine: 'underline', // Underline to look like a link
+        marginVertical: 5,
     },
 });
