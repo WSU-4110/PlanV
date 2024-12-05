@@ -31,7 +31,7 @@ const LoginPage = ({ navigation }) => {
 
     return (
         <ScrollView contentContainerStyle={styles.container}>
-            {/* Exit button at the top-right */}
+            {/* Exit button at the top-left */}
             <TouchableOpacity
                 style={styles.exitButton}
                 onPress={() => navigation.navigate('FirstScreen')} // Navigate to FirstScreen
@@ -144,7 +144,7 @@ const styles = StyleSheet.create({
     exitButton: {
         position: 'absolute',
         top: 20,
-        right: 20,
+        left: 20, // Positioned at the top-left corner
     },
     exitIcon: {
         width: 30,
