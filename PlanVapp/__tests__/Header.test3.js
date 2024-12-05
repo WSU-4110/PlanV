@@ -1,34 +1,20 @@
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react-native';
-import { NavigationContainer } from '@react-navigation/native';
-import { useNavigation } from '@react-navigation/native';
+import { NavigationContainer } from '@react-navigation/native'; // Import NavigationContainer
 import Header from '../components/Header';
 
-// Mock the navigation hook
-jest.mock('@react-navigation/native', () => ({
-  ...jest.requireActual('@react-navigation/native'),
-  useNavigation: jest.fn(),
-}));
+describe('Header Component - Filter Change', () => {
+  it('changes selected filter when "Hotel" is pressed', () => {
+    const { getByText } = render(
+      <NavigationContainer> {/* Wrap Header with NavigationContainer */}
+        <Header handleSelection={jest.fn()} />
+      </NavigationContainer>
+    );
+    
+    const hotelButton = getByText('Hotel').parent;
+    fireEvent.press(hotelButton);
 
-test('clicking on "Flight" button triggers navigation to FlightFilters', () => {
-  // Create a mock function for navigation
-  const mockNavigate = jest.fn();
-
-  // Mock the useNavigation hook to return the mock function
-  useNavigation.mockReturnValue({
-    navigate: mockNavigate,
+    // Check if the button's style contains color: 'white'
+    expect(hotelButton.props.style).toMatchObject({ color: 'white' });
   });
-
-  const { getByTestId } = render(
-    <NavigationContainer>
-      <Header />
-    </NavigationContainer>
-  );
-
-  // Simulate clicking on the "Flight" button
-  const flightButton = getByTestId('flightButton');
-  fireEvent.press(flightButton);
-
-  // Assert that the navigate function was called with the expected route name
-  expect(mockNavigate).toHaveBeenCalledWith('FlightFilters');
 });
