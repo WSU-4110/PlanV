@@ -12,10 +12,8 @@ const Maps = () => {
     const [drivingTime, setDrivingTime] = useState(null);
     const [planeTime, setPlaneTime] = useState(null);
     const [currentLocation, setCurrentLocation] = useState(null);
-    const [firstField, setFirstField] = useState(""); // First field for current location
-    const [secondField, setSecondField] = useState(""); // Second field for coordinates of the selected location
     const mapRef = useRef(null);
-    const GOOGLE_MAPS_APIKEY = 'YOUR_GOOGLE_MAPS_API_KEY'; 
+    const GOOGLE_MAPS_APIKEY = 'AIzaSyCRz4XXO5F1RvKuDZbMeo9L7CjFPj_RJKc'; 
 
     useEffect(() => {
         Geolocation.getCurrentPosition(
@@ -38,27 +36,6 @@ const Maps = () => {
             { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
         );
     }, []);
-
-    const handleLocationSelect = (latitude, longitude) => {
-        // Set first field (current location)
-        setFirstField(`Current Location: ${currentLocation.latitude}, ${currentLocation.longitude}`);
-
-        // Set second field (coordinates of the selected location)
-        setSecondField(`Selected Location: ${latitude}, ${longitude}`);
-
-        // Update destination with the selected location coordinates
-        setDestination({ latitude, longitude });
-
-        // Move map to the selected location
-        mapRef.current.animateToRegion({
-            latitude,
-            longitude,
-            latitudeDelta: 0.05,
-            longitudeDelta: 0.05,
-        }, 1000);
-
-        getTravelTimes({ latitude, longitude });
-    };
 
     const handleDestinationSelect = (data, details = null) => {
         if (details && details.geometry && details.geometry.location) {
@@ -202,6 +179,7 @@ const Maps = () => {
                 }}
             />
 
+
             <GooglePlacesAutocomplete
                 placeholder="Enter destination"
                 fetchDetails={true}
@@ -248,66 +226,48 @@ const Maps = () => {
                     <Text style={styles.buttonText}>Get Directions</Text>
                 </TouchableOpacity>
             )}
-
-            {/* Display Fields */}
-            <View style={styles.fieldsContainer}>
-                <Text style={styles.fieldText}>{firstField}</Text>
-                <Text style={styles.fieldText}>{secondField}</Text>
-            </View>
         </View>
     );
 };
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-    },
+    container: { flex: 1, position: 'relative' },
     textInput: {
-        height: 40,
-        backgroundColor: '#fff',
-        borderRadius: 20,
-        paddingLeft: 10,
-        marginBottom: 10,
-    },
-    travelTimeContainer: {
-        position: 'absolute',
-        bottom: 20,
-        left: 10,
-        right: 10,
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        borderColor: '#888',
+        borderWidth: 1,
+        borderRadius: 5,
         padding: 10,
-        borderRadius: 10,
-    },
-    travelTimeText: {
-        color: '#fff',
-        fontSize: 16,
+        backgroundColor: 'white',
     },
     directionsButton: {
         position: 'absolute',
-        bottom: 100,
-        left: 10,
-        right: 10,
-        backgroundColor: '#1e90ff',
-        paddingVertical: 10,
-        borderRadius: 20,
+        bottom: 70,
+        left: 20,
+        right: 20,
+        backgroundColor: 'linear-gradient(to right, #FF6347, #FF4500)',
+        padding: 15,
+        borderRadius: 30,
         alignItems: 'center',
+        justifyContent: 'center',
     },
     buttonText: {
-        color: '#fff',
+        color: 'white',
         fontSize: 18,
+        fontWeight: 'bold',
     },
-    fieldsContainer: {
+    travelTimeContainer: {
         position: 'absolute',
-        bottom: 150,
-        left: 10,
-        right: 10,
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        bottom: 120,
+        left: 20,
+        right: 20,
+        backgroundColor: 'white',
         padding: 10,
         borderRadius: 10,
+        alignItems: 'center',
     },
-    fieldText: {
-        color: '#fff',
+    travelTimeText: {
         fontSize: 16,
+        fontWeight: 'bold',
     },
 });
 
