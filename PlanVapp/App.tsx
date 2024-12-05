@@ -25,6 +25,7 @@ import Notifications from './screens/Notifications';
 import Contact from './screens/Contact';
 import Account from './screens/Account';
 import Checkout from './screens/Checkout';
+import AddDocuments from './screens/AddDocuments';
 
 
 
@@ -111,6 +112,8 @@ function SettingsStack() {
       headerShown: false }}/>
       <Stack.Screen name="Contact" component={Contact} options={{
       headerShown: false }}/>
+      <Stack.Screen name="AddDocuments" component={AddDocuments} options={{
+      headerShown: false }} />
     </Stack.Navigator>
   );
 }
