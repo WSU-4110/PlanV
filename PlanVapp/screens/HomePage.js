@@ -30,6 +30,7 @@ const HomeScreen = ({navigation}) => {
       <Image source={icons.map} style={{width: 40, height: 30}} />,
       <Image source={icons.cloud} style={{width: 40, height: 30}} />,
       <Image source={icons.user} style={{width: 40, height: 35}} />,
+      <Image source={icons.bag} style={{width: 40, height: 35}}resizeMode="contain" />,
 
   ];
 
@@ -52,6 +53,9 @@ const HomeScreen = ({navigation}) => {
               }
               if (index === 3) {
                 navigation.navigate('Settings'); // Navigate to WeatherScreen if the cloud icon is clicked
+              }
+              if (index === 4) {
+                navigation.navigate('Checkout'); // Navigate to WeatherScreen if the cloud icon is clicked
               }
 
             }}>
