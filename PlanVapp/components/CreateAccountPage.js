@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator, Alert, ScrollView } from 'react-native';
-import { auth } from '../firebaseConfig'; 
-import { createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth'; 
-import { firestore } from '@react-native-firebase/firestore'; // Import Firestore
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator, Alert, ScrollView, Image } from 'react-native';
+import { auth } from '../firebaseConfig';
+import { createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
+import { firestore } from '@react-native-firebase/firestore'; 
+import ExitDoorIcon from '../assets/exit-door.png'; 
 
 const CreateAccountPage = ({ navigation }) => {
     const [email, setEmail] = useState('');
@@ -15,10 +16,9 @@ const CreateAccountPage = ({ navigation }) => {
             .then((userCredential) => {
                 const user = userCredential.user;
 
-                // Store user information in Firestore
                 firestore()
                     .collection('users')
-                    .doc(user.uid) // Store user data by their unique UID
+                    .doc(user.uid) 
                     .set({
                         email: user.email,
                         createdAt: new Date(),
@@ -30,7 +30,6 @@ const CreateAccountPage = ({ navigation }) => {
                         console.error('Error storing user data:', error);
                     });
 
-                // Send email verification
                 sendEmailVerification(user)
                     .then(() => {
                         Alert.alert('Success', 'Account created! Please check your email to verify your account.');
@@ -53,6 +52,14 @@ const CreateAccountPage = ({ navigation }) => {
 
     return (
         <ScrollView contentContainerStyle={styles.container}>
+
+            <TouchableOpacity
+                style={styles.exitButton}
+                onPress={() => navigation.goBack()} 
+            >
+                <Image source={ExitDoorIcon} style={styles.exitIcon} />
+            </TouchableOpacity>
+
             <Text style={styles.headerText}>Create Account</Text>
             <TextInput
                 placeholder="Email"
@@ -88,7 +95,7 @@ const styles = StyleSheet.create({
         flexGrow: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#f7f9fc', 
+        backgroundColor: '#f7f9fc',
         padding: 20,
     },
     headerText: {
@@ -106,10 +113,10 @@ const styles = StyleSheet.create({
         marginBottom: 15,
         paddingLeft: 15,
         backgroundColor: '#fff',
-        elevation: 2, 
+        elevation: 2,
     },
     createButton: {
-        backgroundColor: '#000000', 
+        backgroundColor: '#000000',
         borderRadius: 5,
         height: 50,
         width: '100%',
@@ -125,6 +132,15 @@ const styles = StyleSheet.create({
     loginLink: {
         color: '#4a90e2',
         textDecorationLine: 'underline',
+    },
+    exitButton: {
+        position: 'absolute',
+        top: 20,
+        left: 20, 
+    },
+    exitIcon: {
+        width: 30,
+        height: 30,
     },
 });
 
