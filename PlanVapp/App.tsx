@@ -18,6 +18,11 @@ import { ModalPortal } from "react-native-modals";
 import icons from "./constants/icons";
 import Weather from './screens/Weather';
 import Payment from './screens/Payment';
+import FirstScreen from './components/FirstScreen';
+import { useNavigation } from '@react-navigation/native';
+import Maps from './screens/Maps';
+
+
 
 import {
   StatusBar,
@@ -25,6 +30,7 @@ import {
   Text,
   useColorScheme,
   View,
+  Button,
 } from 'react-native';
 
 import { Colors } from 'react-native/Libraries/NewAppScreen';
@@ -39,18 +45,31 @@ const Tab = createBottomTabNavigator();
 function AuthStack() {
   return (
     <Stack.Navigator>
+      <Stack.Screen name="FirstScreen" component={FirstScreen} options={{
+        headerShown: false
+        }}/>
+      
       <Stack.Screen name="Login" component={LoginPage} options={{
-        title:' ',
-        headerTintColor: 'blue,'
+        headerShown: false
         }}/>
       <Stack.Screen name="CreateAccount" component={CreateAccountPage} options={{
-        title:' ',
-        headerTintColor: 'blue,'
+        headerShown: false
       }} />
       <Stack.Screen name="ForgotPassword" component={ForgotPasswordPage} options={{
-        title:' ',
-        headerTintColor: 'blue,'
+        headerShown: false
       }}/>
+    </Stack.Navigator>
+  );
+}
+
+function HomeStack() {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen name="HomePage" component={HomePage} options={{
+        headerShown: false }} />
+      <Stack.Screen name="Maps" component={Maps} options={{
+      headerShown: false }}/>
+      
     </Stack.Navigator>
   );
 }
@@ -59,10 +78,14 @@ function AuthStack() {
 function BookingStack() {
   return (
     <Stack.Navigator>
-      <Stack.Screen name="InitialBooking" component={InitialBooking} />
-      <Stack.Screen name="FlightFilters" component={FlightFilters} />
-      <Stack.Screen name="HotelFilters" component={HotelFilters} />
-      <Stack.Screen name="CarFilters" component={CarFilters} />
+      <Stack.Screen name="InitialBooking" component={InitialBooking} options={{
+        headerShown: false }} />
+      <Stack.Screen name="FlightFilters" component={FlightFilters} options={{
+      headerShown: false }}/>
+      <Stack.Screen name="HotelFilters" component={HotelFilters} options={{
+      headerShown: false }}/>
+      <Stack.Screen name="CarFilters" component={CarFilters} options={{
+      headerShown: false }}/>
     </Stack.Navigator>
   );
 }
@@ -71,9 +94,10 @@ function BookingStack() {
 function SettingsStack() {
   return (
     <Stack.Navigator>
-      <Stack.Screen name="Settings" component={Settings} />
-      <Stack.Screen name="Payment" component={Settings} />
-      <Stack.Screen name="Documents" component={Settings} />
+      <Stack.Screen name="Settings" component={Settings} options={{
+      headerShown: false }}/>
+      <Stack.Screen name="Payment" component={Payment} options={{
+      headerShown: false }}/> 
 
     </Stack.Navigator>
   );
@@ -81,15 +105,41 @@ function SettingsStack() {
 
 // Main tabs for Home, Booking, and Settings
 function MainAppTabs() {
-  return (
-    <Tab.Navigator>
-      <Tab.Screen name="Home" component={HomePage} />
-      <Tab.Screen name="Booking" component={BookingStack} />
-      <Tab.Screen name="Settings" component={Settings} />
-      <Tab.Screen name="Weather" component={Weather} />
-    </Tab.Navigator>
-  );
-}
+    const navigation = useNavigation();
+  
+    return (
+      <Tab.Navigator
+        screenOptions={({ route }) => ({
+          headerLeft: route.name === "Booking" ? (
+            <Button
+              title="Back"
+              onPress={() => navigation.goBack()}
+              color="blue"
+            />
+          ) : null,
+          headerTitleAlign: 'center',
+        })}
+      >
+        <Tab.Screen name="HomePage" component={HomeStack} />
+        <Tab.Screen
+          name="Booking"
+          component={BookingStack}
+          options={{
+            headerTitle: "Booking",
+            headerLeft: () => (
+              <Button
+                title="Back"
+                onPress={() => navigation.goBack()}
+                color="blue"
+              />
+            ),
+          }}
+        />
+        <Tab.Screen name="Weather" component={Weather} />
+        <Tab.Screen name="Settings" component={SettingsStack} />
+      </Tab.Navigator>
+    );
+  }
 
 // Main App component
 function App(): React.JSX.Element {
@@ -157,6 +207,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+
 });
 
 export default App;
