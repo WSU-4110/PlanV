@@ -15,7 +15,7 @@ const Maps = () => {
     const [firstField, setFirstField] = useState(""); // First field for current location
     const [secondField, setSecondField] = useState(""); // Second field for coordinates of the selected image
     const mapRef = useRef(null);
-    const GOOGLE_MAPS_APIKEY = 'AIzaSyCRz4XXO5F1RvKuDZbMeo9L7CjFPj_RJKc'; 
+    const GOOGLE_MAPS_APIKEY = 'AIzaSyCRz4XXO5F1RvKuDZbMeo9L7CjFPj_RJKc';
 
     useEffect(() => {
         Geolocation.getCurrentPosition(
@@ -56,7 +56,7 @@ const Maps = () => {
             latitudeDelta: 0.05,
             longitudeDelta: 0.05,
         }, 1000);
-        
+
         getTravelTimes({ latitude: imageLatitude, longitude: imageLongitude });
     };
 
@@ -273,54 +273,50 @@ const styles = StyleSheet.create({
     },
     textInput: {
         height: 40,
-        backgroundColor: '#fff',
-        borderRadius: 20,
+        borderColor: 'gray',
+        borderWidth: 1,
+        borderRadius: 5,
         paddingLeft: 10,
-        marginBottom: 10,
     },
     travelTimeContainer: {
         position: 'absolute',
-        bottom: 20,
+        top: 150,
         left: 10,
-        right: 10,
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        zIndex: 3,
+        backgroundColor: 'white',
         padding: 10,
-        borderRadius: 10,
+        borderRadius: 5,
     },
     travelTimeText: {
-        color: 'white',
         fontSize: 16,
     },
     directionsButton: {
         position: 'absolute',
-        bottom: 80,
+        bottom: 40,
         left: 10,
         right: 10,
         backgroundColor: 'blue',
         padding: 15,
-        borderRadius: 10,
+        borderRadius: 5,
     },
     buttonText: {
         color: 'white',
-        fontSize: 16,
         textAlign: 'center',
     },
     image: {
         width: 100,
         height: 100,
         marginTop: 20,
-        marginLeft: 10,
-        marginBottom: 10,
     },
     fieldsContainer: {
         position: 'absolute',
-        top: 150,
+        bottom: 100,
         left: 10,
-        right: 10,
+        zIndex: 3,
     },
     fieldText: {
-        color: 'white',
-        fontSize: 16,
+        fontSize: 14,
+        color: 'black',
         marginBottom: 5,
     },
 });
