@@ -24,7 +24,7 @@ import Maps from './screens/Maps';
 import Notifications from './screens/Notifications';
 import Contact from './screens/Contact';
 import Account from './screens/Account';
-
+import Checkout from './screens/Checkout'
 
 
 
@@ -73,6 +73,7 @@ function HomeStack() {
         headerShown: false }} />
       <Stack.Screen name="Maps" component={Maps} options={{
       headerShown: false }}/>
+      <Stack.Screen name="Checkout" component={Checkout} options={{ headerShown: false }} />
       
     </Stack.Navigator>
   );
