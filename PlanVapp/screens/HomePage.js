@@ -45,7 +45,7 @@ const HomeScreen = ({navigation}) => {
                 navigation.navigate('InitialBooking'); // Navigate to InitialBooking if the airplane icon is clicked
               }
               if (index === 1) {
-                navigation.navigate('InitialBooking'); // Navigate to MapScreen if the map icon is clicked
+                navigation.navigate('Maps'); // Navigate to MapScreen if the map icon is clicked
               }
               if (index === 2) {
                 navigation.navigate('Weather'); // Navigate to WeatherScreen if the cloud icon is clicked
