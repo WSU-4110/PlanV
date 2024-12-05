@@ -9,8 +9,14 @@ import {
   Alert,
   FlatList 
 } from 'react-native';
-import { auth, firestore } from '../firebaseConfig'; // Assuming Firebase config
-import { updateProfile, updateEmail, updatePassword } from 'firebase/auth';
+import { auth, firestore } from '../firebaseConfig';
+import { 
+  updateProfile, 
+  updateEmail, 
+  updatePassword,
+  reauthenticateWithCredential, 
+  EmailAuthProvider 
+} from 'firebase/auth';
 import { collection, query, where, getDocs } from 'firebase/firestore';
 
 const AccountScreen = ({ navigation }) => {
@@ -99,15 +105,35 @@ const AccountScreen = ({ navigation }) => {
   };
 
   const handleChangePassword = async () => {
+    // Validate password inputs
+    if (!passwordData.currentPassword || !passwordData.newPassword || !passwordData.confirmPassword) {
+      Alert.alert('Error', 'Please fill in all password fields');
+      return;
+    }
+
     if (passwordData.newPassword !== passwordData.confirmPassword) {
       Alert.alert('Error', 'New passwords do not match');
+      return;
+    }
+
+    if (passwordData.newPassword.length < 6) {
+      Alert.alert('Error', 'Password must be at least 6 characters long');
       return;
     }
 
     try {
       const currentUser = auth.currentUser;
       if (currentUser) {
+        // Reauthenticate the user
+        const credential = EmailAuthProvider.credential(
+          currentUser.email, 
+          passwordData.currentPassword
+        );
+        await reauthenticateWithCredential(currentUser, credential);
+
+        // Change password after successful reauthentication
         await updatePassword(currentUser, passwordData.newPassword);
+        
         Alert.alert('Success', 'Password changed successfully!');
         setPasswordData({
           currentPassword: '',
@@ -116,7 +142,24 @@ const AccountScreen = ({ navigation }) => {
         });
       }
     } catch (error) {
-      Alert.alert('Error', error.message);
+      let errorMessage = 'An error occurred';
+      
+      // Handle specific Firebase error codes
+      switch (error.code) {
+        case 'auth/wrong-password':
+          errorMessage = 'Current password is incorrect';
+          break;
+        case 'auth/weak-password':
+          errorMessage = 'New password is too weak';
+          break;
+        case 'auth/requires-recent-login':
+          errorMessage = 'Please log out and log in again before changing password';
+          break;
+        default:
+          errorMessage = error.message;
+      }
+      
+      Alert.alert('Error', errorMessage);
     }
   };
 
@@ -142,7 +185,6 @@ const AccountScreen = ({ navigation }) => {
 
   return (
     <ScrollView style={styles.container}>
-
       {/* Personal Details Section */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Personal Details</Text>
@@ -257,8 +299,6 @@ const AccountScreen = ({ navigation }) => {
           <Text style={styles.changePasswordText}>🔑 Change Password</Text>
         </TouchableOpacity>
       </View>
-
-      
     </ScrollView>
   );
 };
