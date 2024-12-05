@@ -30,7 +30,6 @@ const HomeScreen = ({navigation}) => {
       <Image source={icons.map} style={{width: 40, height: 30}} />,
       <Image source={icons.cloud} style={{width: 40, height: 30}} />,
       <Image source={icons.user} style={{width: 40, height: 35}} />,
-    
   ];
 
   const ListCategories = () => {
@@ -51,9 +50,8 @@ const HomeScreen = ({navigation}) => {
                 navigation.navigate('Weather'); // Navigate to WeatherScreen if the cloud icon is clicked
               }
               if (index === 3) {
-                navigation.navigate('Settings'); // Navigate to WeatherScreen if the cloud icon is clicked
+                navigation.navigate('Settings'); // Navigate to Settings if the user icon is clicked
               }
-              
             }}>
             {icon}
           </TouchableOpacity>
@@ -61,13 +59,12 @@ const HomeScreen = ({navigation}) => {
       </View>
     );
   };
-  
 
   const Card = ({place}) => {
     return (
       <TouchableOpacity
         activeOpacity={0.8}
-        onPress={() => navigation.navigate('DetailsScreen', place)}>
+        onPress={() => navigation.navigate('Maps', { place })}>
         <ImageBackground style={style.cardImage} source={place.image}>
           <Text
             style={{
@@ -103,39 +100,43 @@ const HomeScreen = ({navigation}) => {
 
   const RecommendedCard = ({place}) => {
     return (
-      <ImageBackground style={style.rmCardImage} source={place.image}>
-        <Text
-          style={{
-            color: COLORS.text,
-            fontSize: 22,
-            fontWeight: 'bold',
-            marginTop: 10,
-          }}>
-          {place.name}
-        </Text>
-        <View
-          style={{
-            flex: 1,
-            justifyContent: 'space-between',
-            alignItems: 'flex-end',
-          }}>
-          <View style={{width: '100%', flexDirection: 'row', marginTop: 10}}>
-            <View style={{flexDirection: 'row'}}>
-              <Icon name="place" size={22} color={COLORS.text} />
-              <Text style={{color: COLORS.text, marginLeft: 5}}>
-                {place.location}
-              </Text>
-            </View>
-            <View style={{flexDirection: 'row'}}>
-              <Icon name="star" size={22} color={COLORS.text} />
-              <Text style={{color: COLORS.text, marginLeft: 5}}>5.0</Text>
-            </View>
-          </View>
-          <Text style={{color: COLORS.text, fontSize: 13}}>
-            {place.details}
+      <TouchableOpacity
+        activeOpacity={0.8}
+        onPress={() => navigation.navigate('Maps', { place })}>
+        <ImageBackground style={style.rmCardImage} source={place.image}>
+          <Text
+            style={{
+              color: COLORS.text,
+              fontSize: 22,
+              fontWeight: 'bold',
+              marginTop: 10,
+            }}>
+            {place.name}
           </Text>
-        </View>
-      </ImageBackground>
+          <View
+            style={{
+              flex: 1,
+              justifyContent: 'space-between',
+              alignItems: 'flex-end',
+            }}>
+            <View style={{width: '100%', flexDirection: 'row', marginTop: 10}}>
+              <View style={{flexDirection: 'row'}}>
+                <Icon name="place" size={22} color={COLORS.text} />
+                <Text style={{color: COLORS.text, marginLeft: 5}}>
+                  {place.location}
+                </Text>
+              </View>
+              <View style={{flexDirection: 'row'}}>
+                <Icon name="star" size={22} color={COLORS.text} />
+                <Text style={{color: COLORS.text, marginLeft: 5}}>5.0</Text>
+              </View>
+            </View>
+            <Text style={{color: COLORS.text, fontSize: 13}}>
+              {place.details}
+            </Text>
+          </View>
+        </ImageBackground>
+      </TouchableOpacity>
     );
   };
 
@@ -252,10 +253,6 @@ const style = StyleSheet.create({
     overflow: 'hidden',
     padding: 10,
   },
-  icon: {
-    width: 30,
-    height: 50,
-    tintColor: 'black',
-},
 });
+
 export default HomeScreen;
