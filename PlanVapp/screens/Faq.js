@@ -3,18 +3,18 @@ import { View, Text, TouchableOpacity, StyleSheet, Image, ScrollView } from 'rea
 import ExitDoorIcon from '../assets/exit-door.png'; // Exit door icon
 import { useNavigation } from '@react-navigation/native';
 
-
 const faqData = [
     { question: "How do we contact you?", answer: "Use the contact us page." },
     { question: "What is the refund policy?", answer: "Please check with your service that you are buying from." },
     { question: "How do I change my payment method?", answer: "Go to the payment section in settings." },
     { question: "Is the app available in multiple languages?", answer: "We currently support English only." },
     { question: "Can I cancel my booking?", answer: "Yes, however, some bookings cannot be cancelled." },
+    { question: "Is there a dark mode option?", answer: "PlanV does not have a dark mode option, however, you can travel to your mobile device settings and turn on Dark Mode there." }
 ];
 
 const FAQ = () => {
     const [expandedIndex, setExpandedIndex] = useState(null);
-    const navigation = useNavigation(); // Hook to navigate
+    const navigation = useNavigation();
 
     const toggleAnswer = (index) => {
         setExpandedIndex(expandedIndex === index ? null : index);
@@ -22,15 +22,15 @@ const FAQ = () => {
 
     return (
         <ScrollView contentContainerStyle={styles.container}>
-            {/* Exit button at the top-left */}
+            {/* Exit button */}
             <TouchableOpacity style={styles.exitButton} onPress={() => navigation.navigate('Settings')}>
                 <Image source={ExitDoorIcon} style={styles.exitIcon} />
             </TouchableOpacity>
 
             {/* Title */}
-            <Text style={styles.title}>FAQ</Text>
+            <Text style={styles.title}>Frequently Asked Questions</Text>
 
-            {/* FAQ Questions and Answers */}
+            {/* FAQ List */}
             {faqData.map((faq, index) => (
                 <View key={index} style={styles.faqItem}>
                     <TouchableOpacity onPress={() => toggleAnswer(index)} style={styles.questionContainer}>
@@ -38,7 +38,9 @@ const FAQ = () => {
                         <Text style={styles.arrow}>{expandedIndex === index ? '▲' : '▼'}</Text>
                     </TouchableOpacity>
                     {expandedIndex === index && (
-                        <Text style={styles.answer}>{faq.answer}</Text>
+                        <View style={styles.answerContainer}>
+                            <Text style={styles.answer}>{faq.answer}</Text>
+                        </View>
                     )}
                 </View>
             ))}
@@ -50,7 +52,7 @@ const styles = StyleSheet.create({
     container: {
         flexGrow: 1,
         padding: 20,
-        backgroundColor: '#f7f9fc',
+        backgroundColor: '#d0eefe', // Light pink background for cuteness
     },
     exitButton: {
         position: 'absolute',
@@ -60,40 +62,54 @@ const styles = StyleSheet.create({
     exitIcon: {
         width: 30,
         height: 30,
+        tintColor: '#d0eefe',
     },
     title: {
-        fontSize: 28,
+        fontSize: 24,
         fontWeight: 'bold',
-        fontFamily: 'Gotham-Light', // Use Gotham-Light font
-        marginBottom: 20,
+        color: '#0572ad', 
+        textAlign: 'center',
+        marginBottom: 30,
+        fontFamily: 'Gotham-Light', 
     },
     faqItem: {
         marginBottom: 15,
+        borderRadius: 10,
+        backgroundColor: '#FFFFFF',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+        elevation: 5,
+        overflow: 'hidden',
     },
     questionContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        padding: 10,
-        backgroundColor: '#fff',
-        borderRadius: 5,
-        elevation: 2,
+        padding: 15,
+        backgroundColor: '#FFF',
     },
     question: {
-        fontSize: 18,
-        fontFamily: 'Gotham-Light', // Use Gotham-Light font
+        fontSize: 16,
+        fontWeight: '500',
         color: '#333',
     },
     arrow: {
-        fontSize: 18,
-        color: '#333',
+        fontSize: 16,
+        color: '#1892d3',
+        fontWeight: 'bold',
+    },
+    answerContainer: {
+        backgroundColor: '#b0dff8',
+        padding: 15,
+        borderTopWidth: 1,
+        borderTopColor: '#FAD4E0', 
     },
     answer: {
-        fontSize: 16,
-        fontFamily: 'Gotham-Light', // Use Gotham-Light font
+        fontSize: 14,
         color: '#555',
-        paddingLeft: 20,
-        paddingTop: 5,
+        lineHeight: 20,
     },
 });
 
