@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   SafeAreaView,
   ScrollView,
@@ -17,23 +17,20 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import COLORS from '../constants/colors';
 import places from '../constants/places';
 import icons from '../constants/icons';
-import CityInfoModal from './CityInfoModal'; // Import the modal
 
-const { width } = Dimensions.get('screen');
+const {width} = Dimensions.get('screen');
 
 // Update COLORS to reflect the changes
 COLORS.primary = '#FFC72C'; // Yellow
 COLORS.text = '#000000'; // Black
 
-const HomeScreen = ({ navigation }) => {
-  const [modalVisible, setModalVisible] = useState(false);
-  const [selectedCity, setSelectedCity] = useState(null);
-
+const HomeScreen = ({navigation}) => {
   const categoryIcons = [
-    <Image source={icons.airplane} style={{ width: 40, height: 30 }} />,
-    <Image source={icons.map} style={{ width: 40, height: 30 }} />,
-    <Image source={icons.cloud} style={{ width: 40, height: 30 }} />,
-    <Image source={icons.user} style={{ width: 40, height: 35 }} />,
+      <Image source={icons.airplane} style={{width: 40, height: 30}} />,
+      <Image source={icons.map} style={{width: 40, height: 30}} />,
+      <Image source={icons.cloud} style={{width: 40, height: 30}} />,
+      <Image source={icons.user} style={{width: 40, height: 35}} />,
+
   ];
 
   const ListCategories = () => {
@@ -54,8 +51,9 @@ const HomeScreen = ({ navigation }) => {
                 navigation.navigate('Weather'); // Navigate to WeatherScreen if the cloud icon is clicked
               }
               if (index === 3) {
-                navigation.navigate('Settings'); // Navigate to Settings
+                navigation.navigate('Settings'); // Navigate to WeatherScreen if the cloud icon is clicked
               }
+
             }}>
             {icon}
           </TouchableOpacity>
@@ -64,14 +62,12 @@ const HomeScreen = ({ navigation }) => {
     );
   };
 
-  const Card = ({ place }) => {
+
+  const Card = ({place}) => {
     return (
       <TouchableOpacity
         activeOpacity={0.8}
-        onPress={() => {
-          setSelectedCity(place.name); // Set the selected city
-          setModalVisible(true); // Open the modal
-        }}>
+        onPress={() => navigation.navigate('DetailsScreen', place)}>
         <ImageBackground style={style.cardImage} source={place.image}>
           <Text
             style={{
@@ -89,15 +85,15 @@ const HomeScreen = ({ navigation }) => {
               flexDirection: 'row',
               alignItems: 'flex-end',
             }}>
-            <View style={{ flexDirection: 'row' }}>
-              <Image source={icons.MG} style={{ width: 30, height: 30 }} />
-              <Text style={{ marginLeft: 5, color: COLORS.text }}>
+            <View style={{flexDirection: 'row'}}>
+            <Image source={icons.MG} style={{width: 30, height: 30}} />
+              <Text style={{marginLeft: 5, color: COLORS.text}}>
                 {place.location}
               </Text>
             </View>
-            <View style={{ flexDirection: 'row' }}>
-              <Image source={icons.star} style={{ width: 30, height: 30 }} />
-              <Text style={{ marginLeft: 5, color: COLORS.text }}>5.0</Text>
+            <View style={{flexDirection: 'row'}}>
+            <Image source={icons.star} style={{width: 30, height: 30}} />
+              <Text style={{marginLeft: 5, color: COLORS.text}}>5.0</Text>
             </View>
           </View>
         </ImageBackground>
@@ -105,7 +101,7 @@ const HomeScreen = ({ navigation }) => {
     );
   };
 
-  const RecommendedCard = ({ place }) => {
+  const RecommendedCard = ({place}) => {
     return (
       <ImageBackground style={style.rmCardImage} source={place.image}>
         <Text
@@ -123,30 +119,27 @@ const HomeScreen = ({ navigation }) => {
             justifyContent: 'space-between',
             alignItems: 'flex-end',
           }}>
-          <View style={{ width: '100%', flexDirection: 'row', marginTop: 10 }}>
-            <View style={{ flexDirection: 'row' }}>
-              <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-                <Image
-                  source={icons.LP}
-                  style={{ width: 18, height: 20 }}
-                  resizeMode="contain"
-                />
+          <View style={{width: '100%', flexDirection: 'row', marginTop: 10}}>
+            <View style={{flexDirection: 'row'}}>
+            <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+              <Image
+              source={icons.LP}
+              style={{ width: 18, height: 20 }}
+              resizeMode="contain"
+              />
               </View>
 
-              <Text style={{ color: COLORS.text, marginLeft: 5 }}>
+              <Text style={{color: COLORS.text, marginLeft: 5}}>
                 {place.location}
               </Text>
             </View>
-            <View style={{ flexDirection: 'row' }}>
-              <Image
-                source={icons.star}
-                style={{ width: 18, height: 20 }}
-                resizeMode="contain"
-              />
-              <Text style={{ color: COLORS.text, marginLeft: 5 }}>5.0</Text>
+            <View style={{flexDirection: 'row'}}>
+            <Image source={icons.star} style={{ width: 18, height: 20 }}
+              resizeMode="contain" />
+              <Text style={{color: COLORS.text, marginLeft: 5}}>5.0</Text>
             </View>
           </View>
-          <Text style={{ color: COLORS.text, fontSize: 13 }}>
+          <Text style={{color: COLORS.text, fontSize: 13}}>
             {place.details}
           </Text>
         </View>
@@ -155,11 +148,11 @@ const HomeScreen = ({ navigation }) => {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.white }}>
+    <SafeAreaView style={{flex: 1, backgroundColor: COLORS.white}}>
       <StatusBar translucent={false} backgroundColor={COLORS.primary} />
       <View style={style.header}>
-        <Image source={icons.house} style={{ width: 40, height: 40 }} />
-        <Image source={icons.notification} style={{ width: 60, height: 60 }} />
+      <Image source={icons.house} style={{width: 40, height: 40}} />
+        <Image source={icons.notification} style={{width: 60, height: 60}} />
       </View>
       <ScrollView showsVerticalScrollIndicator={false}>
         <View
@@ -168,14 +161,14 @@ const HomeScreen = ({ navigation }) => {
             height: 120,
             paddingHorizontal: 20,
           }}>
-          <View style={{ flex: 1 }}>
+          <View style={{flex: 1}}>
             <Text style={style.headerTitle}>Explore the</Text>
             <Text style={style.headerTitle}>beautiful places</Text>
             <View style={style.inputContainer}>
-              <Image source={icons.MG} style={{ width: 15, height: 15 }} />
+            <Image source={icons.MG} style={{width: 15, height: 15}} />
               <TextInput
                 placeholder="Search place"
-                style={{ color: COLORS.grey }}
+                style={{color: COLORS.grey}}
               />
             </View>
           </View>
@@ -184,29 +177,23 @@ const HomeScreen = ({ navigation }) => {
         <Text style={style.sectionTitle}>Places</Text>
         <View>
           <FlatList
-            contentContainerStyle={{ paddingLeft: 20 }}
+            contentContainerStyle={{paddingLeft: 20}}
             horizontal
             showsHorizontalScrollIndicator={false}
             data={places}
-            renderItem={({ item }) => <Card place={item} />}
+            renderItem={({item}) => <Card place={item} />}
           />
           <Text style={style.sectionTitle}>Recommended</Text>
           <FlatList
             snapToInterval={width - 20}
-            contentContainerStyle={{ paddingLeft: 20, paddingBottom: 20 }}
+            contentContainerStyle={{paddingLeft: 20, paddingBottom: 20}}
             showsHorizontalScrollIndicator={false}
             horizontal
             data={places}
-            renderItem={({ item }) => <RecommendedCard place={item} />}
+            renderItem={({item}) => <RecommendedCard place={item} />}
           />
         </View>
       </ScrollView>
-
-      <CityInfoModal
-        visible={modalVisible}
-        city={selectedCity}
-        onClose={() => setModalVisible(false)} // Close the modal
-      />
     </SafeAreaView>
   );
 };
@@ -277,7 +264,6 @@ const style = StyleSheet.create({
     width: 30,
     height: 50,
     tintColor: 'black',
-  },
+},
 });
-
 export default HomeScreen;
