@@ -1,7 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, Image, StyleSheet, TextInput, TouchableOpacity, Alert, ScrollView, Animated } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, Image, StyleSheet, TextInput, TouchableOpacity, Alert, ScrollView } from 'react-native';
 import KeyIcon from '../assets/key.png'; // Key icon for password
 import PadlockIcon from '../assets/padlock.png'; // Padlock icon for username
+import ExitDoorIcon from '../assets/exit-door.png'; // Exit door icon
 import { auth } from '../firebaseConfig'; // Import auth from your config
 import { signInWithEmailAndPassword } from 'firebase/auth'; // Import sign-in method
 
@@ -30,6 +31,14 @@ const LoginPage = ({ navigation }) => {
 
     return (
         <ScrollView contentContainerStyle={styles.container}>
+            {/* Exit button at the top-right */}
+            <TouchableOpacity
+                style={styles.exitButton}
+                onPress={() => navigation.navigate('FirstScreen')} // Navigate to FirstScreen
+            >
+                <Image source={ExitDoorIcon} style={styles.exitIcon} />
+            </TouchableOpacity>
+
             {/* Title Section */}
             <Text style={styles.title}>Login</Text>
 
@@ -131,6 +140,15 @@ const styles = StyleSheet.create({
     forgotPasswordText: {
         color: '#4a90e2',
         textDecorationLine: 'underline',
+    },
+    exitButton: {
+        position: 'absolute',
+        top: 20,
+        right: 20,
+    },
+    exitIcon: {
+        width: 30,
+        height: 30,
     },
 });
 
