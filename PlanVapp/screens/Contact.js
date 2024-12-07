@@ -163,7 +163,7 @@ const styles = StyleSheet.create({
     textAlignVertical: 'top',
   },
   submitButton: {
-    backgroundColor: '#FF69B4', // Cute pink
+    backgroundColor: '#25599fa', 
     borderRadius: 10,
     padding: 15,
     alignItems: 'center',

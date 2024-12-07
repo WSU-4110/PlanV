@@ -7,16 +7,17 @@ import {
     ScrollView,
     TouchableOpacity,
     FlatList,
+    Image
 } from 'react-native';
-import Ionicons from 'react-native-vector-icons/Ionicons';
 import Header from '../../components/Header';
 import { debounce } from 'lodash';
+import icons from '../../constants/icons';
 
 const InitialBooking = ({ navigation }) => {
     const [selectedOption, setSelectedOption] = useState('');
     const [sourceAirportCode, setSourceAirportCode] = useState('BOM');
     const [destinationAirportCode, setDestinationAirportCode] = useState('DEL');
-    const [date, setDate] = useState('2024-11-25');
+    const [date, setDate] = useState('2024-12-25');
     const [classOfService, setClassOfService] = useState('ECONOMY');
     const [itineraryType, setItineraryType] = useState('ONE_WAY');
     const [numAdults, setNumAdults] = useState(1); // Fixed type issue (use numbers instead of strings)
@@ -28,16 +29,18 @@ const InitialBooking = ({ navigation }) => {
     const [query, setQuery] = useState('London');
     const [locationResults, setLocationResults] = useState([]);
     const [geoId, setGeoId] = useState('');
-    const [checkIn, setCheckIn] = useState('2024-12-01');
-    const [checkOut, setCheckOut] = useState('2024-12-10');
+    const [checkIn, setCheckIn] = useState('2024-12-20');
+    const [checkOut, setCheckOut] = useState('2024-12-25');
     const [hotels, setHotels] = useState([]);
     const [Hotelerror, setHotelError] = useState(null);
     const [sourceSuggestions, setSourceSuggestions] = useState([]);
     const [destSuggestions, setDestSuggestions] = useState([]);
+    const [loading, setLoading] = useState(false);
 
-    const API_KEY = '';
+    const API_KEY = '2be7bd6ff7msh1f5a6e2d3d965fbp194a76jsn635d94fd8c1a';
 
     const fetchFlightInfo = async () => {
+        setLoading(true);
         try {
             const response = await fetch(
                 `https://tripadvisor16.p.rapidapi.com/api/v1/flights/searchFlights?sourceAirportCode=${sourceAirportCode}&destinationAirportCode=${destinationAirportCode}&date=${date}&itineraryType=${itineraryType}&sortOrder=${sortOrder}&numAdults=${numAdults}&numSeniors=${numSeniors}&classOfService=${classOfService}&pageNumber=1&nearby=yes&nonstop=yes&currencyCode=USD&region=USA`,
@@ -61,6 +64,9 @@ const InitialBooking = ({ navigation }) => {
             }
         } catch (err) {
             setError('Failed to fetch flight data.');
+        }
+        finally {
+            setLoading(false); // Hide loading after the fetch is complete
         }
     };
 
@@ -119,6 +125,7 @@ const InitialBooking = ({ navigation }) => {
   };
 
   const fetchHotel = async () => {
+    setLoading(true);
       try {
           const response = await fetch(`https://tripadvisor16.p.rapidapi.com/api/v1/hotels/searchHotels?geoId=${geoId}&checkIn=${checkIn}&checkOut=${checkOut}&pageNumber=1&currencyCode=USD`, {
               method: 'GET',
@@ -130,6 +137,7 @@ const InitialBooking = ({ navigation }) => {
           });
 
           const data = await response.json();
+          
           if (response.ok && data?.data?.data?.length > 0) {
               setHotels(data.data.data);
               setHotelError(null);
@@ -141,6 +149,9 @@ const InitialBooking = ({ navigation }) => {
           setHotelError('Failed to fetch hotel data.');
           setHotels([]);
       }
+      finally {
+        setLoading(false); // Hide loading after the fetch is complete
+    }
   };
 
   useEffect(() => {
@@ -154,10 +165,10 @@ const InitialBooking = ({ navigation }) => {
   }, [geoId]);
 
   const handleSearch = () => {
-      if (geoId) {
-          fetchHotel();
-      }
-  };
+    if (geoId) {
+        fetchHotel();
+    }
+};
 
   const navigateToResults = () => {
     // Navigate to SearchResults screen with hotels data as params
@@ -167,13 +178,14 @@ const InitialBooking = ({ navigation }) => {
 
     const handleSelection = (option) => {
         setSelectedOption(option);
-    };
+};
 
 
     return (
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
           <Header handleSelection={handleSelection} />
           <View style={styles.messageContainer}>
+          {loading && <Text style={styles.loadingText}>Loading...</Text>} 
               {selectedOption === 'Flight' && (
                   <>
                       <Text style={styles.title}>Flight Search</Text>
@@ -186,21 +198,22 @@ const InitialBooking = ({ navigation }) => {
                             debouncedSourceFetch(text); // Use debounced fetch
                         }}
                       />
-<FlatList
-    data={sourceSuggestions}
-    keyExtractor={(item) => item.code}
-    renderItem={({ item }) => (
-        <TouchableOpacity
-            style={styles.locationItem}
-            onPress={() => {
-                setSourceAirportCode(item.code); // Update the input with the full name and code
-                setSourceSuggestions([]); // Close the suggestions list
-            }}
-        >
-            <Text>{item.name} ({item.code})</Text>
-        </TouchableOpacity>
-    )}
-/>
+                      <FlatList
+                      data={sourceSuggestions}
+
+                      keyExtractor={(item) => item.code}
+                      renderItem={({ item }) => (
+                      <TouchableOpacity
+                      style={styles.locationItem}
+                      onPress={() => {
+                        setSourceAirportCode(item.code); // Update the input with the full name and code
+                        setSourceSuggestions([]); // Close the suggestions list
+                        }}
+                        >
+                            <Text>{item.name} ({item.code})</Text>
+                            </TouchableOpacity>
+                        )}
+                        />
                         
                       <TextInput
                       data={sourceSuggestions}
@@ -212,21 +225,21 @@ const InitialBooking = ({ navigation }) => {
                             debouncedDestFetch(text); // Use debounced fetch
                         }}
                         />
-<FlatList
-                data={destSuggestions}
-                keyExtractor={(item) => item.code}
-                renderItem={({ item }) => (
-                    <TouchableOpacity
+                        <FlatList
+                        data={destSuggestions}
+                        keyExtractor={(item) => item.code}
+                        renderItem={({ item }) => (
+                        <TouchableOpacity
                         style={styles.locationItem}
-                    onPress={() => {
-                        setDestinationAirportCode(item.code); // Update the input with the full name and code
-                        setDestSuggestions([]); // Close the suggestions list
-                    }}
-                    >
-                        <Text>{item.name} ({item.code})</Text>
-                    </TouchableOpacity>
-                )}
-            />
+                        onPress={() => {
+                            setDestinationAirportCode(item.code); // Update the input with the full name and code
+                            setDestSuggestions([]); // Close the suggestions list
+                            }}
+                            >
+                                <Text>{item.name} ({item.code})</Text>
+                                </TouchableOpacity>
+                                )}
+                                />
 
                       <TextInput
                           style={styles.input}
@@ -238,7 +251,11 @@ const InitialBooking = ({ navigation }) => {
                           onPress={() => setEditable(!editable)}
                           style={styles.input}
                       >
-                          <Ionicons name="person-outline" size={24} color="black" />
+                          <Image 
+                          source={icons.person}
+                          style={{ width: 20, height: 35 }}
+                          resizeMode="contain"
+                          />
                           <TextInput
                               editable={false}
                               placeholderTextColor="red"
@@ -282,7 +299,7 @@ const InitialBooking = ({ navigation }) => {
                   </>
               )}
               {error && <Text style={styles.error}>{error}</Text>}
-              {!selectedOption && <Text style={styles.messageText}>Please select an option</Text>}
+              {!selectedOption && <Text style={styles.messageText}>Please select an option and use the filters already input as they have been tested and work</Text>}
               {selectedOption === 'Hotel' && (
                   <>
                       <Text style={styles.Hoteltitle}>Hotel Search</Text>
@@ -328,7 +345,7 @@ const InitialBooking = ({ navigation }) => {
                           onChangeText={(text) => setCheckOut(text)}
                           placeholderTextColor="#888"
                       />
-  
+                      
                       <TouchableOpacity style={styles.Hotelbutton} onPress={handleSearch}>
                           <Text style={styles.HotelbuttonText}>Search</Text>
                       </TouchableOpacity>
@@ -338,14 +355,10 @@ const InitialBooking = ({ navigation }) => {
                               <Text style={styles.HotelbuttonText}>Go to Results</Text>
                           </TouchableOpacity>
                       )}
+                {Hotelerror && <Text style={styles.Hotelerror}>{Hotelerror}</Text>}
+                    </>
+                )}
   
-                      {Hotelerror && <Text style={styles.error}>{Hotelerror}</Text>}
-                  </>
-              )}
-  
-              {selectedOption === 'Cars' && (
-                  <Text style={styles.messageText}>You selected Car Rental</Text>
-              )}
           </View>
       </ScrollView>
   );
@@ -432,6 +445,16 @@ const styles = StyleSheet.create({
       textAlign: 'center',
       marginTop: 20,
   },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+},
+loadingText: {
+    fontSize: 18,
+    color: '#FF0000',
+},
 });
+
 
 export default InitialBooking;
