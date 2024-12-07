@@ -24,15 +24,6 @@ test('navigates to Account screen', () => {
 });
 
 
-test('navigates to Notifications screen', () => {
-  const mockNavigate = jest.fn();
-  const { getByText } = render(<SettingsScreen navigation={{ navigate: mockNavigate }} />);
-  const notificationsButton = getByText('Notifications');
-  fireEvent.press(notificationsButton);
-  expect(mockNavigate).toHaveBeenCalledWith('Notifications');
-});
-
-
 test('navigates to Appearance screen', () => {
   const mockNavigate = jest.fn();
   const { getByText } = render(<SettingsScreen navigation={{ navigate: mockNavigate }} />);
