@@ -27,6 +27,8 @@ import Account from './screens/Account';
 import Checkout from './screens/Checkout';
 import AddDocuments from './screens/AddDocuments';
 import Documents from './screens/Documents';
+import Faq from './screens/Faq';
+import DetailsScreen from './screens/DetailsScreen';
 
 
 
@@ -72,12 +74,13 @@ function AuthStack() {
 function HomeStack() {
   return (
     <Stack.Navigator>
+      
       <Stack.Screen name="HomePage" component={HomePage} options={{
         headerShown: false }} />
       <Stack.Screen name="Maps" component={Maps} options={{
       headerShown: false }}/>
       <Stack.Screen name="Checkout" component={Checkout} options={{ headerShown: false }} />
-
+      <Stack.Screen name="DetailsScreen" component={DetailsScreen} options={{ headerShown: false }} />
     </Stack.Navigator>
   );
 }
@@ -115,6 +118,8 @@ function SettingsStack() {
       <Stack.Screen name="Contact" component={Contact} options={{
       headerShown: false }}/>
       <Stack.Screen name="AddDocuments" component={AddDocuments} options={{
+      headerShown: false }} />
+      <Stack.Screen name="Faq" component={Faq} options={{
       headerShown: false }} />
     </Stack.Navigator>
   );
