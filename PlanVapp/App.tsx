@@ -40,6 +40,8 @@ import {
   useColorScheme,
   View,
   Button,
+  Image,
+  TouchableOpacity,
 } from 'react-native';
 
 import { Colors } from 'react-native/Libraries/NewAppScreen';
@@ -75,7 +77,7 @@ function HomeStack() {
   return (
     <Stack.Navigator>
       
-      <Stack.Screen name="HomePage" component={HomePage} options={{
+      <Stack.Screen name="Home" component={HomePage} options={{
         headerShown: false }} />
       <Stack.Screen name="Maps" component={Maps} options={{
       headerShown: false }}/>
@@ -132,33 +134,68 @@ function MainAppTabs() {
     return (
       <Tab.Navigator
         screenOptions={({ route }) => ({
-          headerLeft: route.name === "Booking" ? (
-            <Button
-              title="Back"
-              onPress={() => navigation.goBack()}
-              color="blue"
-            />
+          headerLeft: () => route.name === "Booking" ? (
+            <TouchableOpacity onPress={() => navigation.goBack()}>
+              <Image
+                source={icons.back}
+                style={{ width: 40, height: 30 }}
+                
+              />
+            </TouchableOpacity>
           ) : null,
           headerTitleAlign: 'center',
         })}
       >
-        <Tab.Screen name="HomePage" component={HomeStack} />
+        <Tab.Screen name="HomePage" component={HomeStack}
+         />
         <Tab.Screen
           name="Booking"
           component={BookingStack}
           options={{
             headerTitle: "Booking",
             headerLeft: () => (
-              <Button
-                title="Back"
-                onPress={() => navigation.goBack()}
-                color="blue"
+              <TouchableOpacity onPress={() => navigation.goBack()}>
+              <Image
+                source={icons.back}
+                style={{ width: 40, height: 30 }}
+                
               />
+            </TouchableOpacity>
             ),
           }}
         />
-        <Tab.Screen name="Weather" component={Weather} />
-        <Tab.Screen name="Settings" component={SettingsStack} />
+        <Tab.Screen 
+        name="Weather"
+        component={Weather}
+        options={{
+          headerTitle: "Weather",
+          headerLeft: () => (
+            <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Image
+              source={icons.back}
+              style={{ width: 40, height: 30 }}
+              
+            />
+          </TouchableOpacity>
+          ),
+        }}
+      />
+        <Tab.Screen 
+        name="Setting"
+        component={SettingsStack}
+        options={{
+          headerTitle: "Settings",
+          headerLeft: () => (
+            <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Image
+              source={icons.back}
+              style={{ width: 40, height: 30 }}
+              
+            />
+          </TouchableOpacity>
+          ),
+        }}
+      />
       </Tab.Navigator>
     );
   }

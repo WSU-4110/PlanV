@@ -270,7 +270,7 @@ const InitialBooking = ({ navigation }) => {
                               {[
                                   { label: 'Adults', count: numAdults, setCount: setNumAdults },
                                   { label: 'Seniors', count: numSeniors, setCount: setNumSeniors },
-                                  { label: 'Children', count: numChildren, setCount: setNumChildren },
+                                  
                               ].map(({ label, count, setCount }, index) => (
                                   <View key={index} style={styles.selector}>
                                       <Text style={styles.label}>{label}</Text>

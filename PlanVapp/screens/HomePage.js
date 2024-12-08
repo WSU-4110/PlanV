@@ -51,7 +51,7 @@ const HomeScreen = ({navigation}) => {
                 navigation.navigate('Weather'); // Navigate to WeatherScreen if the cloud icon is clicked
               }
               if (index === 3) {
-                navigation.navigate('Settings'); // Navigate to WeatherScreen if the cloud icon is clicked
+                navigation.navigate('Setting'); // Navigate to WeatherScreen if the cloud icon is clicked
               }
               if (index === 4) {
                 navigation.navigate('Checkout'); // Navigate to WeatherScreen if the cloud icon is clicked
@@ -195,7 +195,6 @@ const HomeScreen = ({navigation}) => {
   };
   
 
-
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.white }}>
       <StatusBar translucent={false} backgroundColor={COLORS.primary} />
@@ -203,94 +202,102 @@ const HomeScreen = ({navigation}) => {
         <Image source={icons.house} style={{ width: 40, height: 40 }} />
         <Image source={icons.notification} style={{ width: 60, height: 60 }} />
       </View>
-      <ScrollView showsVerticalScrollIndicator={false}>
-        <View
-          style={{
-            backgroundColor: COLORS.primary,
-            height: 120,
-            paddingHorizontal: 20,
-          }}>
-          <View style={{ flex: 1 }}>
-            <Text style={style.headerTitle}>Explore the</Text>
-            <Text style={style.headerTitle}>beautiful places</Text>
-            <View style={style.inputContainer}>
-              <Image source={icons.MG} style={{ width: 15, height: 15 }} />
-              <TextInput
-                style={style.searchInput}
-                placeholder="Search Paris, Tokyo, or Pisa for different result"
-                value={searchQuery}
-                onChangeText={setSearchQuery}
-              />
-              <TouchableOpacity onPress={scrollToSearch} style={style.searchButton}>
-                <Text style={{ color: COLORS.white }}>Search</Text>
+      {/* Use a single FlatList for all content */}
+      <FlatList
+        data={[]}
+        ListHeaderComponent={
+          <>
+            <View
+              style={{
+                backgroundColor: COLORS.primary,
+                height: 120,
+                paddingHorizontal: 20,
+              }}>
+              <View style={{ flex: 1 }}>
+                <Text style={style.headerTitle}>Explore the</Text>
+                <Text style={style.headerTitle}>beautiful places</Text>
+                <View style={style.inputContainer}>
+                  <Image source={icons.MG} style={{ width: 15, height: 15 }} />
+                  <TextInput
+                    style={style.searchInput}
+                    placeholder="Search Paris, Tokyo, or Pisa for different result"
+                    value={searchQuery}
+                    onChangeText={setSearchQuery}
+                  />
+                  <TouchableOpacity
+                    onPress={scrollToSearch}
+                    style={style.searchButton}>
+                    <Text style={{ color: COLORS.white }}>Search</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
+            <ListCategories />
+            <Text style={style.sectionTitle}>Recommended Places</Text>
+            <FlatList
+              snapToInterval={width - 20}
+              contentContainerStyle={{ paddingLeft: 20, paddingBottom: 20 }}
+              showsHorizontalScrollIndicator={false}
+              horizontal
+              data={filteredPlaces.length > 0 ? filteredPlaces : places}
+              ref={flatListRef}
+              keyExtractor={(item) => item.name}
+              renderItem={({ item }) => <RecommendedCard place={item} />}
+            />
+            <Text style={style.sectionTitle}>Your Itinerary</Text>
+          </>
+        }
+        ListFooterComponent={
+          <View style={style.addContainer}>
+            <TextInput
+              placeholder="Enter destination"
+              style={style.input}
+              value={newDestination}
+              onChangeText={setNewDestination}
+            />
+            <TextInput
+              placeholder="Enter date (YYYY-MM-DD)"
+              style={style.input}
+              value={newDate}
+              onChangeText={setNewDate}
+            />
+            <TouchableOpacity style={style.addButton} onPress={addToItinerary}>
+              <Text style={style.addButtonText}>Add</Text>
+            </TouchableOpacity>
+          </View>
+        }
+        contentContainerStyle={{ paddingBottom: 20 }}
+        data={itinerary}
+        keyExtractor={(item) => item.key}
+        renderItem={({ item }) => (
+          <View style={style.itineraryItem}>
+            <Text style={style.itineraryText}>
+              {item.destination} - {item.date}
+            </Text>
+            <View style={style.buttonContainer}>
+              <TouchableOpacity
+                style={style.detailsButton}
+                onPress={() =>
+                  navigation.navigate('DetailsScreen', {
+                    place: { name: item.destination, date: item.date },
+                  })
+                }>
+                <Text style={style.detailsButtonText}>Details</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={style.deleteButton}
+                onPress={() => deleteFromItinerary(item.key)}>
+                <Text style={style.deleteButtonText}>Delete</Text>
               </TouchableOpacity>
             </View>
           </View>
-        </View>
-        <ListCategories />
-        <Text style={style.sectionTitle}>Recommended Places</Text>
-        <FlatList
-          snapToInterval={width - 20}
-          contentContainerStyle={{ paddingLeft: 20, paddingBottom: 20 }}
-          showsHorizontalScrollIndicator={false}
-          horizontal
-          data={filteredPlaces.length > 0 ? filteredPlaces : places}
-          ref={flatListRef}
-          
-          keyExtractor={(item) => item.name}
-          renderItem={({ item }) => <RecommendedCard place={item} />}
-        />
-        {/* Itinerary Section */}
-        <Text style={style.sectionTitle}>Your Itinerary</Text>
-        <FlatList
-          contentContainerStyle={{ paddingLeft: 20, paddingBottom: 20 }}
-          data={itinerary}
-          keyExtractor={(item) => item.key}
-          renderItem={({ item }) => (
-            <View style={style.itineraryItem}>
-              <Text style={style.itineraryText}>
-                {item.destination} - {item.date}
-              </Text>
-              <View style={style.buttonContainer}>
-                <TouchableOpacity
-                  style={style.detailsButton}
-                  onPress={() =>
-                    navigation.navigate('DetailsScreen', {
-                      place: { name: item.destination, date: item.date },
-                    })
-                  }>
-                  <Text style={style.detailsButtonText}>Details</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={style.deleteButton}
-                  onPress={() => deleteFromItinerary(item.key)}>
-                  <Text style={style.deleteButtonText}>Delete</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          )}
-        />
-        <View style={style.addContainer}>
-          <TextInput
-            placeholder="Enter destination"
-            style={style.input}
-            value={newDestination}
-            onChangeText={setNewDestination}
-          />
-          <TextInput
-            placeholder="Enter date (YYYY-MM-DD)"
-            style={style.input}
-            value={newDate}
-            onChangeText={setNewDate}
-          />
-          <TouchableOpacity style={style.addButton} onPress={addToItinerary}>
-            <Text style={style.addButtonText}>Add</Text>
-          </TouchableOpacity>
-        </View>
-      </ScrollView>
+        )}
+      />
     </SafeAreaView>
   );
 };
+
+  
   
 
 const style = StyleSheet.create({
