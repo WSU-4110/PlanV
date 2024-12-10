@@ -48,7 +48,7 @@ Follow these steps to get PlanV running on your device:
 
 6. **Run the App** (cd PlanV/PlanVapp)
 
-For more detailed instructions, follow the official [installation guide link](https://github.com/WSU-4110/PlanV/).
+For more detailed instructions, follow the official [installation guide link](https://github.com/WSU-4110/PlanV/blob/main/INSTALLATION.md).
 
 ---
 
