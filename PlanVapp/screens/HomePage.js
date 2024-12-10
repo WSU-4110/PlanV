@@ -86,45 +86,6 @@ const HomeScreen = ({navigation}) => {
     }
   };
 
-
-  const Card = ({place}) => {
-    return (
-      <TouchableOpacity
-        activeOpacity={0.8}
-        onPress={() => navigation.navigate('DetailsScreen', place)}>
-        <ImageBackground style={style.cardImage} source={place.image}>
-          <Text
-            style={{
-              color: COLORS.text,
-              fontSize: 20,
-              fontWeight: 'bold',
-              marginTop: 10,
-            }}>
-            {place.name}
-          </Text>
-          <View
-            style={{
-              flex: 1,
-              justifyContent: 'space-between',
-              flexDirection: 'row',
-              alignItems: 'flex-end',
-            }}>
-            <View style={{flexDirection: 'row'}}>
-            <Image source={icons.MG} style={{width: 30, height: 30}} />
-              <Text style={{marginLeft: 5, color: COLORS.text}}>
-                {place.location}
-              </Text>
-            </View>
-            <View style={{flexDirection: 'row'}}>
-            <Image source={icons.star} style={{color: '#FFFFFF' , width: 30, height: 30}} />
-              <Text style={{marginLeft: 5, color: COLORS.text}}>5.0</Text>
-            </View>
-          </View>
-        </ImageBackground>
-      </TouchableOpacity>
-    );
-  };
-
   const RecommendedCard = ({place}) => {
     return (
       <ImageBackground style={style.rmCardImage} source={place.image}>
