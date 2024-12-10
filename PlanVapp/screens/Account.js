@@ -17,7 +17,6 @@ import {
   reauthenticateWithCredential, 
   EmailAuthProvider 
 } from 'firebase/auth';
-import { collection, query, where, getDocs } from 'firebase/firestore';
 
 const AccountScreen = ({ navigation }) => {
   const [isEditing, setIsEditing] = useState(false);
@@ -38,49 +37,6 @@ const AccountScreen = ({ navigation }) => {
     hotels: []
   });
 
-  // Fetch bookings when component mounts
-  useEffect(() => {
-    const fetchBookings = async () => {
-      try {
-        const currentUser = auth.currentUser;
-        if (!currentUser) return;
-
-        // Fetch flight bookings
-        const flightQuery = query(
-          collection(firestore, 'bookings'), 
-          where('userId', '==', currentUser.uid),
-          where('type', '==', 'flight')
-        );
-        const flightSnapshot = await getDocs(flightQuery);
-        const flightBookings = flightSnapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data()
-        }));
-
-        // Fetch hotel bookings
-        const hotelQuery = query(
-          collection(firestore, 'bookings'), 
-          where('userId', '==', currentUser.uid),
-          where('type', '==', 'hotel')
-        );
-        const hotelSnapshot = await getDocs(hotelQuery);
-        const hotelBookings = hotelSnapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data()
-        }));
-
-        setBookings({
-          flights: flightBookings,
-          hotels: hotelBookings
-        });
-      } catch (error) {
-        console.error('Error fetching bookings:', error);
-        Alert.alert('Error', 'Could not fetch bookings');
-      }
-    };
-
-    fetchBookings();
-  }, []);
 
   const handleUpdateProfile = async () => {
     try {
