@@ -9,10 +9,7 @@ import {
 } from 'react-native';
 import { auth } from '../firebaseConfig'; 
 
-export const SettingsScreen = ({ navigation }) => {
-    const handleContact = () => {
-        Linking.openURL('mailto:planvapp@gmail.com');
-    };
+export const SettingsScreen = ({ navigation }) => {};
 
     const handleLogout = () => {
         auth.signOut();
