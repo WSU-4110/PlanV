@@ -55,5 +55,11 @@ For more detailed instructions, follow the official [installation guide link](ht
 ## Authors
 
 - **Aminah** (hm3480@wayne.edu)
+worked on Booking search, Home, and Login.
+
 - **Amna** (hc9090@wayne.edu)
+Worked on Settings, Document storing, and logout.
+
 - **Kleant** (hf0218@wayne.edu)
+Worked on Map, Weather, and payment storing.
+
