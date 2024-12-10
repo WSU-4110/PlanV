@@ -1,3 +1,9 @@
+
+PlanV is a travel planning application that allows users to organize their trips all in one place. Key features include:
+* Viewing distance, weather, and flight details for desired destinations.
+* Generating hotel recommendations.
+* Storing flight documents securely.
+* Editing user profiles for a personalized experience.
 ## How to Install and Run PlanV
 
 Follow these simple steps to get PlanV running on your device:
