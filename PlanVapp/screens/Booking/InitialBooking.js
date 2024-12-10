@@ -182,7 +182,7 @@ const InitialBooking = ({ navigation }) => {
 
 
     return (
-      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+      <View contentContainerStyle={{ flexGrow: 1 }}>
           <Header handleSelection={handleSelection} />
           <View style={styles.messageContainer}>
           {loading && <Text style={styles.loadingText}>Loading...</Text>} 
@@ -360,7 +360,7 @@ const InitialBooking = ({ navigation }) => {
                 )}
   
           </View>
-      </ScrollView>
+      </View>
   );
 };
   

@@ -46,41 +46,41 @@ const AccountScreen = ({ navigation }) => {
         if (!currentUser) return;
 
         // Fetch flight bookings
-        const flightQuery = query(
-          collection(firestore, 'bookings'), 
-          where('userId', '==', currentUser.uid),
-          where('type', '==', 'flight')
-        );
-        const flightSnapshot = await getDocs(flightQuery);
-        const flightBookings = flightSnapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data()
-        }));
+        // const flightQuery = query(
+        //   collection(firestore, 'bookings'), 
+        //   where('userId', '==', currentUser.uid),
+        //   where('type', '==', 'flight')
+        // );
+        // const flightSnapshot = await getDocs(flightQuery);
+        // const flightBookings = flightSnapshot.docs.map(doc => ({
+        //   id: doc.id,
+        //   ...doc.data()
+        // }));
 
         // Fetch hotel bookings
-        const hotelQuery = query(
-          collection(firestore, 'bookings'), 
-          where('userId', '==', currentUser.uid),
-          where('type', '==', 'hotel')
-        );
-        const hotelSnapshot = await getDocs(hotelQuery);
-        const hotelBookings = hotelSnapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data()
-        }));
+        // const hotelQuery = query(
+        //   collection(firestore, 'bookings'), 
+        //   where('userId', '==', currentUser.uid),
+        //   where('type', '==', 'hotel')
+        // );
+        // const hotelSnapshot = await getDocs(hotelQuery);
+        // const hotelBookings = hotelSnapshot.docs.map(doc => ({
+        //   id: doc.id,
+        //   ...doc.data()
+        // }));
 
-        setBookings({
-          flights: flightBookings,
-          hotels: hotelBookings
-        });
-      } catch (error) {
+        // setBookings({
+        //   flights: flightBookings,
+        //   hotels: hotelBookings
+        // });
+            } catch (error) {
         console.error('Error fetching bookings:', error);
         Alert.alert('Error', 'Could not fetch bookings');
-      }
-    };
+            }
+          };
 
-    fetchBookings();
-  }, []);
+          fetchBookings();
+        }, []);
 
   const handleUpdateProfile = async () => {
     try {
