@@ -132,70 +132,58 @@ function MainAppTabs() {
     const navigation = useNavigation();
 
     return (
-      <Tab.Navigator
-        screenOptions={({ route }) => ({
-          headerLeft: () => route.name === "Booking" ? (
-            <TouchableOpacity onPress={() => navigation.goBack()}>
-              <Image
-                source={icons.back}
-                style={{ width: 40, height: 30 }}
-                
-              />
-            </TouchableOpacity>
-          ) : null,
-          headerTitleAlign: 'center',
-        })}
-      >
-        <Tab.Screen name="HomePage" component={HomeStack}
-         />
-        <Tab.Screen
-          name="Booking"
-          component={BookingStack}
-          options={{
-            headerTitle: "Booking",
-            headerLeft: () => (
-              <TouchableOpacity onPress={() => navigation.goBack()}>
-              <Image
-                source={icons.back}
-                style={{ width: 40, height: 30 }}
-                
-              />
-            </TouchableOpacity>
-            ),
-          }}
-        />
-        <Tab.Screen 
-        name="Weather"
-        component={Weather}
-        options={{
-          headerTitle: "Weather",
-          headerLeft: () => (
-            <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Image
-              source={icons.back}
-              style={{ width: 40, height: 30 }}
-              
-            />
-          </TouchableOpacity>
-          ),
-        }}
-      />
-        <Tab.Screen 
-        name="Setting"
-        component={SettingsStack}
-        options={{
-          headerTitle: "Settings",
-          headerLeft: () => (
-            <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Image
-              source={icons.back}
-              style={{ width: 40, height: 30 }}
-              
-            />
-          </TouchableOpacity>
-          ),
-        }}
-      />
+      <Tab.Navigator>
+        <>
+          <Tab.Screen name="HomePage" component={HomeStack} options={{ headerTitle: "Home", headerTitleAlign: 'center' }}/>
+          <Tab.Screen
+            name="Booking"
+            component={BookingStack}
+            options={{
+              headerTitle: "Booking",
+              headerTitleAlign: 'center',
+              headerLeft: () => (
+                <TouchableOpacity onPress={() => navigation.goBack()}>
+                  <Image
+                    source={icons.back}
+                    style={{ width: 40, height: 30 }}
+                  />
+                </TouchableOpacity>
+              ),
+            }}
+          />
+          <Tab.Screen 
+            name="Weather"
+            component={Weather}
+            options={{
+              headerTitle: "Weather",
+              headerTitleAlign: 'center',
+              headerLeft: () => (
+                <TouchableOpacity onPress={() => navigation.goBack()}>
+                  <Image
+                    source={icons.back}
+                    style={{ width: 40, height: 30 }}
+                  />
+                </TouchableOpacity>
+              ),
+            }}
+          />
+          <Tab.Screen 
+            name="Setting"
+            component={SettingsStack}
+            options={{
+              headerTitle: "Settings",
+              headerTitleAlign: 'center',
+              headerLeft: () => (
+                <TouchableOpacity onPress={() => navigation.goBack()}>
+                  <Image
+                    source={icons.back}
+                    style={{ width: 40, height: 30 }}
+                  />
+                </TouchableOpacity>
+              ),
+            }}
+          />
+        </>
       </Tab.Navigator>
     );
   }
