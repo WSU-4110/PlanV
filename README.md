@@ -27,7 +27,7 @@ When using PlanV, follow these recommendations to achieve the best results:
 ### Important Notes
 - The use of pre-set `useState` values for Flights and Hotels is recommended, as these configurations have been tested and confirmed to work.
 - Please allow time for hotel search results to load, as a large amount of data is being processed in the background. Rest assured, the functionality works correctly despite potential delays.
-[SRS] https://github.com/WSU-4110/PlanV/blob/main/SRS.pdf
+[SRS](https://github.com/WSU-4110/PlanV/blob/main/SRS.pdf)
 ---
 
 ## How to Install and Run PlanV
