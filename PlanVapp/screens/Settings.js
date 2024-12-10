@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import { auth } from '../firebaseConfig'; 
 
-export const SettingsScreen = ({ navigation }) => {};
+export const SettingsScreen = ({ navigation }) => {
 
     const handleLogout = () => {
         auth.signOut();
